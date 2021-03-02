@@ -17,10 +17,10 @@ output: html_document
 <div class="row" style="padding-top: 30px;">
 <div class="col-sm-6">
 
-Just some text here we'll get back to it i swear
+Parking Capacity Data: 
 
 
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results = 'hide'}
 library(xlsx)
 library(readxl)
 library(plotly)
@@ -38,7 +38,7 @@ library(remotes)
 
 ```
 
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results = 'hide'}
 devtools::install_github("wsp-sag/tcadr")
 install.packages('htmltools')
 library(tcadr)
@@ -95,8 +95,26 @@ ParkCap_2025 <- tcadr::read_tcad("C:/Users/JacobFo/OneDrive - City of Durham/MTP
 ParkCap_2035 <- tcadr::read_tcad("C:/Users/JacobFo/OneDrive - City of Durham/MTP Work/TRM MTP Inputs Scenario Years/2035 MTP wAmendments/Input/Programs/Parkcap.bin")
 ParkCap_2045 <- tcadr::read_tcad("C:/Users/JacobFo/OneDrive - City of Durham/MTP Work/TRM MTP Inputs Scenario Years/2045 MTP wAmendments/Input/Programs/Parkcap.bin")
 
+ParkCap_2013$Year <- 2013
+ParkCap_2016$Year <- 2016
+ParkCap_2025$Year <- 2025
+ParkCap_2035$Year <- 2035
+ParkCap_2045$Year <- 2045
+
+All_Caps <- rbind(ParkCap_2013, ParkCap_2016, ParkCap_2025, ParkCap_2035, ParkCap_2045)
+
+```
 
 
 
+
+
+
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(DT)
+datatable(All_Caps, filter='top',
+          caption="Parking Capacities for PASAs for 2013, 2016, 2025, 2035 and 2045")
 ```
 
