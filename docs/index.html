@@ -19,6 +19,15 @@
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
@@ -33,11 +42,6 @@
     </style>
 
 <style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
 <script type="text/javascript">
 if (window.hljs) {
   hljs.configure({languages: []});
@@ -50,32 +54,6 @@ if (window.hljs) {
 
 
 
-<style type="text/css">
-h1 {
-  font-size: 34px;
-}
-h1.title {
-  font-size: 38px;
-}
-h2 {
-  font-size: 30px;
-}
-h3 {
-  font-size: 24px;
-}
-h4 {
-  font-size: 18px;
-}
-h5 {
-  font-size: 16px;
-}
-h6 {
-  font-size: 12px;
-}
-.table th:not([align]) {
-  text-align: left;
-}
-</style>
 
 
 
@@ -86,10 +64,6 @@ h6 {
   max-width: 940px;
   margin-left: auto;
   margin-right: auto;
-}
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
 }
 img {
   max-width:100%;
@@ -106,40 +80,13 @@ button.code-folding-btn:focus {
 summary {
   display: list-item;
 }
+pre code {
+  padding: 0;
+}
 </style>
 
 
 <style type="text/css">
-/* padding for bootstrap navbar */
-body {
-  padding-top: 51px;
-  padding-bottom: 40px;
-}
-/* offset scroll position for anchor links (for fixed navbar)  */
-.section h1 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h2 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h3 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h4 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h5 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h6 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
 .dropdown-submenu {
   position: relative;
 }
@@ -167,7 +114,7 @@ body {
   margin-right: -10px;
 }
 .dropdown-submenu:hover>a:after {
-  border-left-color: #ffffff;
+  border-left-color: #adb5bd;
 }
 .dropdown-submenu.pull-left {
   float: none;
@@ -179,7 +126,7 @@ body {
 }
 </style>
 
-<script>
+<script type="text/javascript">
 // manage active state of menu based on current page
 $(document).ready(function () {
   // active menu anchor
@@ -190,10 +137,23 @@ $(document).ready(function () {
   var menuAnchor = $('a[href="' + href + '"]');
 
   // mark it active
-  menuAnchor.parent().addClass('active');
+  menuAnchor.tab('show');
 
   // if it's got a parent navbar menu mark it active as well
   menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
 });
 </script>
 
@@ -205,7 +165,6 @@ $(document).ready(function () {
   max-height: 500px;
   min-height: 44px;
   overflow-y: auto;
-  background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
@@ -292,7 +251,7 @@ $(document).ready(function () {
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<div class="fluid-row" id="header">
+<div id="header">
 
 
 
@@ -345,16 +304,18 @@ library(plotly)</code></pre>
 library(leaflet)
 library(rgdal)</code></pre>
 <pre><code>## Loading required package: sp</code></pre>
-<pre><code>## rgdal: version: 1.5-21, (SVN revision 1105)
+<pre><code>## rgdal: version: 1.5-23, (SVN revision 1121)
 ## Geospatial Data Abstraction Library extensions to R successfully loaded
-## Loaded GDAL runtime: GDAL 3.0.4, released 2020/01/28
+## Loaded GDAL runtime: GDAL 3.2.1, released 2020/12/29
 ## Path to GDAL shared files: C:/Users/JacobFo/Documents/R/R-4.0.3/library/rgdal/gdal
 ## GDAL binary built with GEOS: TRUE 
-## Loaded PROJ runtime: Rel. 6.3.1, February 10th, 2020, [PJ_VERSION: 631]
+## Loaded PROJ runtime: Rel. 7.2.1, January 1st, 2021, [PJ_VERSION: 721]
 ## Path to PROJ shared files: C:/Users/JacobFo/Documents/R/R-4.0.3/library/rgdal/proj
+## PROJ CDN enabled: FALSE
 ## Linking to sp version:1.4-5
 ## To mute warnings of possible GDAL/OSR exportToProj4() degradation,
-## use options(&quot;rgdal_show_exportToProj4_warnings&quot;=&quot;none&quot;) before loading rgdal.</code></pre>
+## use options(&quot;rgdal_show_exportToProj4_warnings&quot;=&quot;none&quot;) before loading rgdal.
+## Overwritten PROJ_LIB was C:/Users/JacobFo/Documents/R/R-4.0.3/library/rgdal/proj</code></pre>
 <pre class="r"><code>library(dplyr)
 library(rmarkdown)
 library(crosstalk)
@@ -364,7 +325,77 @@ library(lubridate)</code></pre>
 <pre><code>## The following objects are masked from &#39;package:base&#39;:
 ## 
 ##     date, intersect, setdiff, union</code></pre>
-<pre class="r"><code>library(htmltools)</code></pre>
+<pre class="r"><code>library(htmltools)
+library(remotes)</code></pre>
+<pre class="r"><code>devtools::install_github(&quot;wsp-sag/tcadr&quot;)</code></pre>
+<pre><code>## Skipping install of &#39;tcadr&#39; from a github remote, the SHA1 (a98d2f39) has not changed since last install.
+##   Use `force = TRUE` to force installation</code></pre>
+<pre class="r"><code>install.packages(&#39;htmltools&#39;)</code></pre>
+<pre><code>## Warning: package &#39;htmltools&#39; is in use and will not be installed</code></pre>
+<pre class="r"><code>library(tcadr)
+
+##read_tcad(&quot;inst/extdata/TransitR.bin&quot;)
+
+##https://github.com/wsp-sag/tcadr
+
+
+SE_2013 &lt;- tcadr::read_tcad(&quot;C:/Users/JacobFo/OneDrive - City of Durham/SE_2013-rev.bin&quot;)</code></pre>
+<pre><code>## Warning: `tbl_df()` was deprecated in dplyr 1.0.0.
+## Please use `tibble::as_tibble()` instead.</code></pre>
+<pre><code>## Warning: `funs()` was deprecated in dplyr 0.8.0.
+## Please use a list of either functions or lambdas: 
+## 
+##   # Simple named list: 
+##   list(mean = mean, median = median)
+## 
+##   # Auto named with `tibble::lst()`: 
+##   tibble::lst(mean, median)
+## 
+##   # Using lambdas
+##   list(~ mean(., trim = .2), ~ median(., na.rm = TRUE))</code></pre>
+<pre class="r"><code>SE_2025 &lt;- tcadr::read_tcad(&quot;C:/Users/JacobFo/OneDrive - City of Durham/MTP Work/TRM SE Data Inputs/2025/SE_2025.bin&quot;)
+
+SE_2045 &lt;- tcadr::read_tcad(&quot;C:/Users/JacobFo/OneDrive - City of Durham/MTP Work/TRM SE Data Inputs/2045/SE_2045.bin&quot;)
+
+
+
+Stud_Off_2045 &lt;- tcadr::read_tcad(&quot;C:/Users/JacobFo/OneDrive - City of Durham/MTP Work/TRM MTP Inputs Scenario Years/2045 MTP wAmendments/Input/Univ/Stud_Off Total 2045.bin&quot;)
+
+
+
+library(dplyr)
+
+SE_2025_sum &lt;- SE_2025 %&gt;%
+  group_by(PASA) %&gt;%
+  summarize(n = n(),
+            work = sum(Industry + Office + Service_RateLow + Service_RateHigh + Retail),
+            vistor = sum(Service_RateLow + Service_RateHigh + Retail))
+
+
+SE_2045_sum &lt;- SE_2045 %&gt;%
+  group_by(PASA) %&gt;%
+  summarize(n = n(),
+            work = sum(Industry + Office + Service_RateLow + Service_RateHigh + Retail),
+            vistor = sum(Service_RateLow + Service_RateHigh + Retail))
+
+SE_2045_sum$University &lt;- NA
+
+SE_2045_sum$University[2] &lt;- sum(Stud_Off_2045$UNC)
+SE_2045_sum$University[3] &lt;- sum(Stud_Off_2045$DUKE)
+SE_2045_sum$University[4] &lt;- sum(Stud_Off_2045$NCSU)
+SE_2045_sum$University[5] &lt;- sum(Stud_Off_2045$NCCU)
+
+SE_2045_sum=SE_2045_sum[-1,]
+
+
+
+
+###Add Park Capcity files
+ParkCap_2013 &lt;- tcadr::read_tcad(&quot;C:/Users/JacobFo/OneDrive - City of Durham/MTP Work/TRM MTP Inputs Scenario Years/2013 Base Year/Input/Programs/Parkcap.bin&quot;)
+ParkCap_2016 &lt;- tcadr::read_tcad(&quot;C:/Users/JacobFo/TRMv6.2/Original TRMv6.2_2016/Input/Programs/Parkcap.bin&quot;)
+ParkCap_2025 &lt;- tcadr::read_tcad(&quot;C:/Users/JacobFo/OneDrive - City of Durham/MTP Work/TRM MTP Inputs Scenario Years/2045 MTP wAmendments/Input/Programs/Parkcap.bin&quot;)
+ParkCap_2035 &lt;- tcadr::read_tcad(&quot;C:/Users/JacobFo/OneDrive - City of Durham/MTP Work/TRM MTP Inputs Scenario Years/2035 MTP wAmendments/Input/Programs/Parkcap.bin&quot;)
+ParkCap_2045 &lt;- tcadr::read_tcad(&quot;C:/Users/JacobFo/OneDrive - City of Durham/MTP Work/TRM MTP Inputs Scenario Years/2045 MTP wAmendments/Input/Programs/Parkcap.bin&quot;)</code></pre>
 
 
 
@@ -393,7 +424,7 @@ $(document).ready(function () {
 
 $(document).ready(function () {
   $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
+    $(this).parent().toggleClass('nav-tabs-open');
   });
 });
 </script>

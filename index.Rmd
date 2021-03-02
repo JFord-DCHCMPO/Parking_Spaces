@@ -35,11 +35,13 @@ library(crosstalk)
 library(lubridate)
 library(htmltools)
 library(remotes)
-library(tcadr)
+
 ```
 
 ```{r}
-
+devtools::install_github("wsp-sag/tcadr")
+install.packages('htmltools')
+library(tcadr)
 
 ##read_tcad("inst/extdata/TransitR.bin")
 
@@ -82,10 +84,6 @@ SE_2045_sum$University[4] <- sum(Stud_Off_2045$NCSU)
 SE_2045_sum$University[5] <- sum(Stud_Off_2045$NCCU)
 
 SE_2045_sum=SE_2045_sum[-1,]
-
-
-barplot(SE_2045_sum$PASA)
-
 
 
 
