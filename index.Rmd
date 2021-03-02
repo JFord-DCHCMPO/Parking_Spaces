@@ -34,5 +34,71 @@ library(rmarkdown)
 library(crosstalk)
 library(lubridate)
 library(htmltools)
+library(remotes)
+library(tcadr)
+```
+
+```{r}
+
+
+##read_tcad("inst/extdata/TransitR.bin")
+
+##https://github.com/wsp-sag/tcadr
+
+
+SE_2013 <- tcadr::read_tcad("C:/Users/JacobFo/OneDrive - City of Durham/SE_2013-rev.bin")
+
+
+SE_2025 <- tcadr::read_tcad("C:/Users/JacobFo/OneDrive - City of Durham/MTP Work/TRM SE Data Inputs/2025/SE_2025.bin")
+
+SE_2045 <- tcadr::read_tcad("C:/Users/JacobFo/OneDrive - City of Durham/MTP Work/TRM SE Data Inputs/2045/SE_2045.bin")
+
+
+
+Stud_Off_2045 <- tcadr::read_tcad("C:/Users/JacobFo/OneDrive - City of Durham/MTP Work/TRM MTP Inputs Scenario Years/2045 MTP wAmendments/Input/Univ/Stud_Off Total 2045.bin")
+
+
+
+library(dplyr)
+
+SE_2025_sum <- SE_2025 %>%
+  group_by(PASA) %>%
+  summarize(n = n(),
+            work = sum(Industry + Office + Service_RateLow + Service_RateHigh + Retail),
+            vistor = sum(Service_RateLow + Service_RateHigh + Retail))
+
+
+SE_2045_sum <- SE_2045 %>%
+  group_by(PASA) %>%
+  summarize(n = n(),
+            work = sum(Industry + Office + Service_RateLow + Service_RateHigh + Retail),
+            vistor = sum(Service_RateLow + Service_RateHigh + Retail))
+
+SE_2045_sum$University <- NA
+
+SE_2045_sum$University[2] <- sum(Stud_Off_2045$UNC)
+SE_2045_sum$University[3] <- sum(Stud_Off_2045$DUKE)
+SE_2045_sum$University[4] <- sum(Stud_Off_2045$NCSU)
+SE_2045_sum$University[5] <- sum(Stud_Off_2045$NCCU)
+
+SE_2045_sum=SE_2045_sum[-1,]
+
+
+barplot(SE_2045_sum$PASA)
+
+
+
+
+
+###Add Park Capcity files
+ParkCap_2013 <- tcadr::read_tcad("C:/Users/JacobFo/OneDrive - City of Durham/MTP Work/TRM MTP Inputs Scenario Years/2013 Base Year/Input/Programs/Parkcap.bin")
+ParkCap_2016 <- tcadr::read_tcad("C:/Users/JacobFo/TRMv6.2/Original TRMv6.2_2016/Input/Programs/Parkcap.bin")
+ParkCap_2025 <- tcadr::read_tcad("C:/Users/JacobFo/OneDrive - City of Durham/MTP Work/TRM MTP Inputs Scenario Years/2045 MTP wAmendments/Input/Programs/Parkcap.bin")
+ParkCap_2035 <- tcadr::read_tcad("C:/Users/JacobFo/OneDrive - City of Durham/MTP Work/TRM MTP Inputs Scenario Years/2035 MTP wAmendments/Input/Programs/Parkcap.bin")
+ParkCap_2045 <- tcadr::read_tcad("C:/Users/JacobFo/OneDrive - City of Durham/MTP Work/TRM MTP Inputs Scenario Years/2045 MTP wAmendments/Input/Programs/Parkcap.bin")
+
+
+
+
 ```
 
