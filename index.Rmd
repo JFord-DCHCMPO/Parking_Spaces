@@ -1,0 +1,38 @@
+---
+title: "Parking Study"
+output: html_document
+---
+
+<style type="text/css">
+.title {
+  display: none;
+}
+
+#getting-started img {
+  margin-right: 10px;
+}
+
+</style>
+
+<div class="row" style="padding-top: 30px;">
+<div class="col-sm-6">
+
+Just some text here we'll get back to it i swear
+
+
+```{r}
+library(xlsx)
+library(readxl)
+library(plotly)
+library(sf)
+library(dplyr)
+library(tidygeocoder)
+library(leaflet)
+library(rgdal)
+library(dplyr)
+library(rmarkdown)
+library(crosstalk)
+library(lubridate)
+library(htmltools)
+```
+
