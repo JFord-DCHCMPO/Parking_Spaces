@@ -105,6 +105,29 @@ All_Caps <- rbind(ParkCap_2013, ParkCap_2016, ParkCap_2025, ParkCap_2035, ParkCa
 
 ```
 
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
+
+labels = c("1 = UNC Campus",
+"2 = Duke Campus",
+"3 = NCSU Campus",
+"4 = NCCU Campus",
+"5 = Chapel Hill CBD",
+"6 = Durham CBD",
+"7 = Raleigh CBD",
+"8 = Carrboro CBD",
+"9 = Hillsborough CBD",
+"10=RDU"
+
+
+)
+
+levels = c(1,2,3,4,5,6,7,8,9,10)
+
+All_Caps$PASA <- ordered(All_Caps$PASA,
+                         levels=levels,
+                         labels=labels)
+
+```
 
 
 
