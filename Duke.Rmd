@@ -10,3 +10,163 @@ Using updated data for both Durham, both parking spaces and ultimately capacity 
 
 For Duke University, a 2015 inventory of parking spaces was used to update the base year. Future projections are based off employment growth and the distribution from the Visitor category to trip purposes is based off peak trip attraction share, mirroring the previous methodology. 
 
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results = 'hide'}
+##devtools::install_github("wsp-sag/tcadr")
+##install.packages('htmltools')
+library(tcadr)
+library(DT)
+
+##read_tcad("inst/extdata/TransitR.bin")
+
+##https://github.com/wsp-sag/tcadr
+
+
+SE_2013 <- tcadr::read_tcad("C:/Users/JacobFo/OneDrive - City of Durham/SE_2013-rev.bin")
+SE_2016<- tcadr::read_tcad ("SE_2016.BIN")
+
+
+SE_2025 <- tcadr::read_tcad("C:/Users/JacobFo/OneDrive - City of Durham/MTP Work/TRM SE Data Inputs/2025/SE_2025.bin")
+
+SE_2045 <- tcadr::read_tcad("C:/Users/JacobFo/OneDrive - City of Durham/MTP Work/TRM SE Data Inputs/2045/SE_2045.bin")
+
+
+
+Stud_Off_2045 <- tcadr::read_tcad("C:/Users/JacobFo/OneDrive - City of Durham/MTP Work/TRM MTP Inputs Scenario Years/2045 MTP wAmendments/Input/Univ/Stud_Off Total 2045.bin")
+
+
+Stud_Off_2016 <- tcadr::read_tcad("Stud_Off Total 2016.bin")
+library(dplyr)
+
+SE_2025_sum <- SE_2025 %>%
+  group_by(PASA) %>%
+  summarize(n = n(),
+            work = sum(Industry + Office + Service_RateLow + Service_RateHigh + Retail),
+            vistor = sum(Service_RateLow + Service_RateHigh + Retail))
+
+
+SE_2045_sum <- SE_2045 %>%
+  group_by(PASA) %>%
+  summarize(n = n(),
+            work = sum(Industry + Office + Service_RateLow + Service_RateHigh + Retail),
+            vistor = sum(Service_RateLow + Service_RateHigh + Retail))
+
+SE_2016_sum <- SE_2016 %>%
+  group_by(PASA) %>%
+  summarize(n = n(),
+            work = sum(Industry + Office + Service_RateLow + Service_RateHigh + Retail),
+            vistor = sum(Service_RateLow + Service_RateHigh + Retail))
+
+SE_2045_sum$University <- NA
+
+SE_2045_sum$University[2] <- sum(Stud_Off_2045$UNC)
+SE_2045_sum$University[3] <- sum(Stud_Off_2045$DUKE)
+SE_2045_sum$University[4] <- sum(Stud_Off_2045$NCSU)
+SE_2045_sum$University[5] <- sum(Stud_Off_2045$NCCU)
+
+SE_2016_sum$University <- NA
+
+SE_2016_sum$University[2] <- sum(Stud_Off_2016$UNC)
+SE_2016_sum$University[3] <- sum(Stud_Off_2016$DUKE)
+SE_2016_sum$University[4] <- sum(Stud_Off_2016$NCSU)
+SE_2016_sum$University[5] <- sum(Stud_Off_2016$NCCU)
+
+SE_2016_sum=SE_2016_sum[-1,]
+
+
+
+
+###Add Park Capcity files
+ParkCap_2013 <- tcadr::read_tcad("C:/Users/JacobFo/OneDrive - City of Durham/MTP Work/TRM MTP Inputs Scenario Years/2013 Base Year/Input/Programs/Parkcap.bin")
+ParkCap_2016 <- tcadr::read_tcad("C:/Users/JacobFo/TRMv6.2/Original TRMv6.2_2016/Input/Programs/Parkcap.bin")
+ParkCap_2025 <- tcadr::read_tcad("C:/Users/JacobFo/OneDrive - City of Durham/MTP Work/TRM MTP Inputs Scenario Years/2025 MTP wAmendments/Input/Programs/Parkcap.bin")
+ParkCap_2035 <- tcadr::read_tcad("C:/Users/JacobFo/OneDrive - City of Durham/MTP Work/TRM MTP Inputs Scenario Years/2035 MTP wAmendments/Input/Programs/Parkcap.bin")
+ParkCap_2045 <- tcadr::read_tcad("C:/Users/JacobFo/OneDrive - City of Durham/MTP Work/TRM MTP Inputs Scenario Years/2045 MTP wAmendments/Input/Programs/Parkcap.bin")
+
+ParkCap_2013$Year <- 2013
+ParkCap_2016$Year <- 2016
+ParkCap_2025$Year <- 2025
+ParkCap_2035$Year <- 2035
+ParkCap_2045$Year <- 2045
+
+All_Caps <- rbind(ParkCap_2013, ParkCap_2016, ParkCap_2025, ParkCap_2035, ParkCap_2045)
+library(readxl)
+parkingspaces <-read_excel("parkingspaces.xlsx")
+```
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+duke_emp_growth<-log((SE_2045_sum$work[SE_2045_sum$PASA==2])/(SE_2016_sum$work[SE_2016_sum$PASA==2]))/(2045-2016)
+duke_visitor_growth<-log((SE_2045_sum$vistor[SE_2045_sum$PASA==2])/(SE_2016_sum$vistor[SE_2016_sum$PASA==2]))/(2045-2016)
+duke_uni_growth<-log((SE_2045_sum$University[SE_2045_sum$PASA==2])/(SE_2016_sum$University[SE_2016_sum$PASA==2]))/(2045-2016)
+
+duke_emp_growth
+duke_visitor_growth
+duke_uni_growth
+
+```
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+duke <- data.frame(matrix(ncol =7, nrow = 6))
+t <- c("Year", "Work Spaces", "Visitor Spaces", "University Spaces", "Total Spaces" ,"Capacity Uses", "Capacity Total")
+colnames(duke) <- t
+
+years_2 <-c(2013, 2015, 2020, 2030, 2040, 2050) 
+
+duke$Year <- years_2
+
+duke$`Work Spaces`[1]<- parkingspaces$Work[parkingspaces$PASA== "2 = Duke Campus" & parkingspaces$Year==2013]
+duke$`Visitor Spaces`[1]<- parkingspaces$Visitors[parkingspaces$PASA== "2 = Duke Campus" & parkingspaces$Year==2013]
+duke$`University Spaces`[1]<- parkingspaces$Uni[parkingspaces$PASA== "2 = Duke Campus" & parkingspaces$Year==2013]
+
+duke$`Capacity Total`[1] <-ParkCap_2013$CapHBW[ParkCap_2013$PASA==2] + ParkCap_2013$CapHBSH[ParkCap_2013$PASA==2] + ParkCap_2013$CapHBO[ParkCap_2013$PASA==2 ]+ ParkCap_2013$CapHBU[ParkCap_2013$PASA==2]+ ParkCap_2013$CapNHNW[ParkCap_2013$PASA==2] +ParkCap_2013$CapWBNH[ParkCap_2013$PASA==2]
+
+duke$`Total Spaces`[duke$Year==2015] <- 21064
+
+duke$`Total Spaces`[duke$Year==2013] <- duke$`Work Spaces`[duke$Year==2013]+ duke$`Visitor Spaces`[duke$Year==2013] + duke$`University Spaces`[duke$Year==2013]
+duke$`Work Spaces`[duke$Year==2015] <- duke$`Total Spaces`[duke$Year==2015] *( duke$`Work Spaces`[duke$Year==2013]/duke$`Total Spaces`[duke$Year==2013])
+duke$`Visitor Spaces`[duke$Year==2015] <- duke$`Total Spaces`[duke$Year==2015] *( duke$`Visitor Spaces`[duke$Year==2013]/duke$`Total Spaces`[duke$Year==2013])
+duke$`University Spaces`[duke$Year==2015] <- duke$`Total Spaces`[duke$Year==2015] *( duke$`University Spaces`[duke$Year==2013]/duke$`Total Spaces`[duke$Year==2013])
+
+
+
+
+```
+
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+##forecastING 
+
+duke$`Work Spaces`[duke$Year==2020] <-duke$`Work Spaces`[duke$Year==2015]*(1+duke_emp_growth)^(2020-2015)
+duke$`Work Spaces`[duke$Year==2030] <-duke$`Work Spaces`[duke$Year==2015]*(1+duke_emp_growth)^(2030-2015)
+duke$`Work Spaces`[duke$Year==2040] <-duke$`Work Spaces`[duke$Year==2015]*(1+duke_emp_growth)^(2040-2015)
+duke$`Work Spaces`[duke$Year==2050] <-duke$`Work Spaces`[duke$Year==2015]*(1+duke_emp_growth)^(2050-2015)
+
+duke$`Visitor Spaces`[duke$Year==2020] <-duke$`Visitor Spaces`[duke$Year==2015]*(1+duke_visitor_growth)^(2020-2015)
+duke$`Visitor Spaces`[duke$Year==2030] <-duke$`Visitor Spaces`[duke$Year==2015]*(1+duke_visitor_growth)^(2030-2015)
+duke$`Visitor Spaces`[duke$Year==2040] <-duke$`Visitor Spaces`[duke$Year==2015]*(1+duke_visitor_growth)^(2040-2015)
+duke$`Visitor Spaces`[duke$Year==2050] <-duke$`Visitor Spaces`[duke$Year==2015]*(1+duke_visitor_growth)^(2050-2015)
+
+duke$`University Spaces`[duke$Year==2020] <-duke$`University Spaces`[duke$Year==2015]*(1+duke_uni_growth)^(2020-2015)
+duke$`University Spaces`[duke$Year==2030] <-duke$`University Spaces`[duke$Year==2015]*(1+duke_uni_growth)^(2030-2015)
+duke$`University Spaces`[duke$Year==2040] <-duke$`University Spaces`[duke$Year==2015]*(1+duke_uni_growth)^(2040-2015)
+duke$`University Spaces`[duke$Year==2050] <-duke$`University Spaces`[duke$Year==2015]*(1+duke_uni_growth)^(2050-2015)
+
+duke$`Capacity Total`[duke$Year==2015]<-duke$`Capacity Total`[duke$Year==2013]/duke$`Total Spaces`[duke$Year==2013] * duke$`Total Spaces`[duke$Year==2015]
+duke$`Capacity Total`[duke$Year==2020]<-duke$`Capacity Total`[duke$Year==2013]/duke$`Total Spaces`[duke$Year==2013] * duke$`Total Spaces`[duke$Year==2020]
+duke$`Capacity Total`[duke$Year==2030]<-duke$`Capacity Total`[duke$Year==2013]/duke$`Total Spaces`[duke$Year==2013] * duke$`Total Spaces`[duke$Year==2030]
+duke$`Capacity Total`[duke$Year==2040]<-duke$`Capacity Total`[duke$Year==2013]/duke$`Total Spaces`[duke$Year==2013] * duke$`Total Spaces`[duke$Year==2040]
+duke$`Capacity Total`[duke$Year==2050]<-duke$`Capacity Total`[duke$Year==2013]/duke$`Total Spaces`[duke$Year==2013] * duke$`Total Spaces`[duke$Year==2050]
+
+duke$`Capacity Uses` <- duke$`Capacity Total`/2
+
+duke$`Total Spaces`<- duke$`Work Spaces`+duke$`Visitor Spaces`+duke$`University Spaces`
+duke[,-1] <- round(duke[,-1], digits=0)
+
+datatable(duke)
+```
+
+

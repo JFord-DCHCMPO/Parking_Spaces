@@ -64,7 +64,7 @@ SE_2045 <- tcadr::read_tcad("C:/Users/JacobFo/OneDrive - City of Durham/MTP Work
 Stud_Off_2045 <- tcadr::read_tcad("C:/Users/JacobFo/OneDrive - City of Durham/MTP Work/TRM MTP Inputs Scenario Years/2045 MTP wAmendments/Input/Univ/Stud_Off Total 2045.bin")
 
 
-
+Stud_Off_2016 <- tcadr::read_tcad("Stud_Off Total 2016.bin")
 library(dplyr)
 
 SE_2025_sum <- SE_2025 %>%
@@ -93,7 +93,14 @@ SE_2045_sum$University[3] <- sum(Stud_Off_2045$DUKE)
 SE_2045_sum$University[4] <- sum(Stud_Off_2045$NCSU)
 SE_2045_sum$University[5] <- sum(Stud_Off_2045$NCCU)
 
-SE_2045_sum=SE_2045_sum[-1,]
+SE_2016_sum$University <- NA
+
+SE_2016_sum$University[2] <- sum(Stud_Off_2016$UNC)
+SE_2016_sum$University[3] <- sum(Stud_Off_2016$DUKE)
+SE_2016_sum$University[4] <- sum(Stud_Off_2016$NCSU)
+SE_2016_sum$University[5] <- sum(Stud_Off_2016$NCCU)
+
+SE_2016_sum=SE_2016_sum[-1,]
 
 
 
