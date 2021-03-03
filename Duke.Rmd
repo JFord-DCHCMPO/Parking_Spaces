@@ -6,9 +6,8 @@ output: html_document
 ---
 
 
-Using updated data for both Durham, both parking spaces and ultimately capacity were recalculated for Durham and Duke University. 
 
-For Duke University, a 2015 inventory of parking spaces was used to update the base year. Future projections are based off employment growth and the distribution from the Visitor category to trip purposes is based off peak trip attraction share, mirroring the previous methodology. 
+For Duke University, a 2015 inventory of parking spaces was used to update the base year. Besides the base year data changing the methods are the same as completed in the Durham update. Future projections are based off employment growth and the distribution from the Work, Visitor and University categories to trip purposes is based off peak trip attraction share.
 
 
 
@@ -95,8 +94,13 @@ library(readxl)
 parkingspaces <-read_excel("parkingspaces.xlsx")
 ```
 
+Duke's Annual Employment Growth Rate:
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
+Duke's Visitor (Retail + Service) Growth Rate: 
+
+Duke's University Employment Growth Rate: 
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results = 'hide'}
 duke_emp_growth<-log((SE_2045_sum$work[SE_2045_sum$PASA==2])/(SE_2016_sum$work[SE_2016_sum$PASA==2]))/(2045-2016)
 duke_visitor_growth<-log((SE_2045_sum$vistor[SE_2045_sum$PASA==2])/(SE_2016_sum$vistor[SE_2016_sum$PASA==2]))/(2045-2016)
 duke_uni_growth<-log((SE_2045_sum$University[SE_2045_sum$PASA==2])/(SE_2016_sum$University[SE_2016_sum$PASA==2]))/(2045-2016)
@@ -178,23 +182,82 @@ duke[,-1] <- round(duke[,-1], digits=0)
 
 ```
 
+Using the updated 2015 inventory as the base year for 2015, after removing parking spaces outside of Duke's PASA, the total number of parking spaces is **21,064**. This is entered into teh table below, along with the original base year of 2013 which was used for the calculation of 2025, 2035, and 2045 parking data. 
 
+To calculate worker, visitor and university spaces, the proportion from 2013 is kept constant in the new base year 2015 scenario. Similarly, the ratio of capacity to spaces in 2013 is kept constant in 2015. 
+
+The future years are calculated based off the employment growth in the PASA for workers spaces (total employment), visitor spaces (retail + service) and university spaces (university employees). Annual growth rates are seen below: 
+
+```{r, echo=FALSE, message=FALSE}
+duke_emp_growth<-log((SE_2045_sum$work[SE_2045_sum$PASA==2])/(SE_2016_sum$work[SE_2016_sum$PASA==2]))/(2045-2016)
+duke_visitor_growth<-log((SE_2045_sum$vistor[SE_2045_sum$PASA==2])/(SE_2016_sum$vistor[SE_2016_sum$PASA==2]))/(2045-2016)
+duke_uni_growth<-log((SE_2045_sum$University[SE_2045_sum$PASA==2])/(SE_2016_sum$University[SE_2016_sum$PASA==2]))/(2045-2016)
+
+duke_emp_growth
+duke_visitor_growth
+duke_uni_growth
+
+```
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 duke <- add_row(duke)
 duke$Year[7]<-"2045 Original"
 
+duke <- add_row(duke)
+duke$Year[8]<-"2016 Original"
 
 duke$`Work Spaces`[7] <- parkingspaces$Work[parkingspaces$PASA=="2 = Duke Campus" & parkingspaces$Year==2045]
 duke$`University Spaces`[7] <- parkingspaces$Uni[parkingspaces$PASA=="2 = Duke Campus" & parkingspaces$Year==2045]
 duke$`Visitor Spaces`[7] <- parkingspaces$Visitors[parkingspaces$PASA=="2 = Duke Campus" & parkingspaces$Year==2045]
 duke$`Capacity Total`[7] <- ParkCap_2045$CapHBW[ParkCap_2045$PASA==2] + ParkCap_2045$CapHBO[ParkCap_2045$PASA==2]+ ParkCap_2045$CapHBSH[ParkCap_2045$PASA==2]+ ParkCap_2045$CapNHNW[ParkCap_2045$PASA==2]+ ParkCap_2045$CapWBNH[ParkCap_2045$PASA==2]+ ParkCap_2045$CapHBU[ParkCap_2045$PASA==2]
 
+duke$`Work Spaces`[8] <- parkingspaces$Work[parkingspaces$PASA=="2 = Duke Campus" & parkingspaces$Year==2016]
+duke$`University Spaces`[8] <- parkingspaces$Uni[parkingspaces$PASA=="2 = Duke Campus" & parkingspaces$Year==2016]
+duke$`Visitor Spaces`[8] <- parkingspaces$Visitors[parkingspaces$PASA=="2 = Duke Campus" & parkingspaces$Year==2016]
+duke$`Capacity Total`[8] <- ParkCap_2016$CapHBW[ParkCap_2016$PASA==2] + ParkCap_2016$CapHBO[ParkCap_2016$PASA==2]+ ParkCap_2016$CapHBSH[ParkCap_2016$PASA==2]+ ParkCap_2016$CapNHNW[ParkCap_2016$PASA==2]+ ParkCap_2016$CapWBNH[ParkCap_2016$PASA==2]+ ParkCap_2016$CapHBU[ParkCap_2016$PASA==2]
+
+
 
 duke$`Total Spaces`<- duke$`Work Spaces`+duke$`Visitor Spaces`+duke$`University Spaces`
-
+duke$`Capacity Uses` <- duke$`Capacity Total`/2
 
 duke[,-1] <- round(duke[,-1], digits=0)
 datatable(duke)
 ```
+
+
+**Trips Attracted to Durham from TRMv6.2 2016 input. **
+
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+duke_attractions <- data.frame(matrix(ncol =6, nrow = 1))
+dukenames <- c("HBW", "HBShop", "HBO", "WBNH", "NHNW", "Total")
+colnames(duke_attractions) <- dukenames
+
+
+
+
+
+duke_attractions$HBW<-sum(PK_HBW$A[PK_HBW$PASA==2])
+duke_attractions$HBShop<-sum(PK_SHP$A[PK_SHP$PASA==2])
+duke_attractions$HBO<-sum(PK_HBO$A[PK_HBO$PASA==2])
+duke_attractions$WBNH<-sum(PK_WBNH$A[PK_WBNH$PASA==2])
+duke_attractions$NHNW<-sum(PK_NHNW$A[PK_NHNW$PASA==2])
+
+duke_attractions$Total<-duke_attractions$HBW+
+  duke_attractions$HBShop+
+  duke_attractions$HBO+
+  duke_attractions$WBNH+
+  duke_attractions$NHNW
+
+duke_attractions <-round(duke_attractions,digits=0)
+datatable(duke_attractions)
+  
+
+```
+
+
+
 
