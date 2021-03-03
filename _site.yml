@@ -1,10 +1,12 @@
   
-name: "Parking Spaces"
+name: "Parking Data in TRM"
 navbar:
-  title: "Parking Spaces"
+  title: "Parking Data in TRM"
   left:
-    - text: "Home"
+    - text: "Parking Capacity"
       href: index.html
+    - text: "Parking Spaces"
+      href: parkingspaces.html
 
 
       

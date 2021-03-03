@@ -91,7 +91,7 @@ SE_2045_sum=SE_2045_sum[-1,]
 ###Add Park Capcity files
 ParkCap_2013 <- tcadr::read_tcad("C:/Users/JacobFo/OneDrive - City of Durham/MTP Work/TRM MTP Inputs Scenario Years/2013 Base Year/Input/Programs/Parkcap.bin")
 ParkCap_2016 <- tcadr::read_tcad("C:/Users/JacobFo/TRMv6.2/Original TRMv6.2_2016/Input/Programs/Parkcap.bin")
-ParkCap_2025 <- tcadr::read_tcad("C:/Users/JacobFo/OneDrive - City of Durham/MTP Work/TRM MTP Inputs Scenario Years/2045 MTP wAmendments/Input/Programs/Parkcap.bin")
+ParkCap_2025 <- tcadr::read_tcad("C:/Users/JacobFo/OneDrive - City of Durham/MTP Work/TRM MTP Inputs Scenario Years/2025 MTP wAmendments/Input/Programs/Parkcap.bin")
 ParkCap_2035 <- tcadr::read_tcad("C:/Users/JacobFo/OneDrive - City of Durham/MTP Work/TRM MTP Inputs Scenario Years/2035 MTP wAmendments/Input/Programs/Parkcap.bin")
 ParkCap_2045 <- tcadr::read_tcad("C:/Users/JacobFo/OneDrive - City of Durham/MTP Work/TRM MTP Inputs Scenario Years/2045 MTP wAmendments/Input/Programs/Parkcap.bin")
 
@@ -136,7 +136,7 @@ lubridate::ymd(All_Caps$Year, truncated=2L)
 
 
 
-##Existing Parking capacity data from SVN repository: ##
+**Existing Parking capacity data from SVN repository: **
 
 
 
@@ -145,4 +145,128 @@ library(DT)
 datatable(All_Caps, filter='top',
           caption="Parking Capacities for PASAs for 2013, 2016, 2025, 2035 and 2045")
 ```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+All_Caps$Tot_Cap <- All_Caps$CapHBW + All_Caps$CapHBO + All_Caps$CapHBSH + All_Caps$CapHBU + All_Caps$CapNHNW + All_Caps$CapWBNH 
+```
+
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, eval=FALSE}
+library(plotly)
+
+bars <- plot_ly(All_Caps, x = ~Year, y=~Tot_Cap, type='bar', name='Total Capacity', hoverinfo='text', text = ~paste(PASA, 
+                                                                                                                    '</br></br>', Tot_Cap))
+  
+bars <- bars %>%
+  add_trace(y=~CapHBW, name = 'HBW', hoverinfo='text', text = ~paste(PASA,'</br></br>', CapHBW)) %>%
+  add_trace(y=~CapHBO, name = 'HBO', hoverinfo='text', text = ~paste(PASA,'</br></br>', CapHBO)) %>%
+  add_trace(y=~CapHBSH, name = 'HBSH', hoverinfo='text', text = ~paste(PASA,'</br></br>', CapHBSH)) %>%
+  layout(title="Parking Capacity",
+         barmode='group',
+         xaxis=list(type="category"))
+
+bars
+
+```
+
+
+
+**Total Capacity**
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE,}
+total_bar <- plot_ly(All_Caps, x=~Year, y=~Tot_Cap, type='bar', color=~PASA, colors="Accent", hoverinfo='text', text = ~paste(PASA,'</br></br>', Tot_Cap)) %>%
+  layout(barmode='group',
+         xaxis=list(type="category"))
+
+total_bar
+```
+
+
+
+
+
+
+
+
+
+**HBW Capacity**
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE,}
+hbw_bar <- plot_ly(All_Caps, x=~Year, y=~CapHBW, type='bar', color=~PASA, colors="Accent", hoverinfo='text', text = ~paste(PASA,'</br></br>', CapHBW)) %>%
+  layout(barmode='group',
+         xaxis=list(type="category"))
+
+hbw_bar
+```
+
+
+
+
+
+
+
+
+**HBO Capacity**
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE,}
+hbo_bar <- plot_ly(All_Caps, x=~Year, y=~CapHBO, type='bar', color=~PASA, colors="Accent", hoverinfo='text', text = ~paste(PASA,'</br></br>', CapHBO)) %>%
+  layout(barmode='group',
+         xaxis=list(type="category"))
+
+hbo_bar
+```
+
+
+
+
+
+**HBSH Capacity**
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE,}
+hbsh_bar <- plot_ly(All_Caps, x=~Year, y=~CapHBSH, type='bar', color=~PASA, colors="Accent", hoverinfo='text', text = ~paste(PASA,'</br></br>', CapHBSH)) %>%
+  layout(barmode='group',
+         xaxis=list(type="category"))
+
+hbsh_bar
+```
+
+
+**HBU Capacity**
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE,}
+hbu_bar <- plot_ly(All_Caps, x=~Year, y=~CapHBU, type='bar', color=~PASA, colors="Accent", hoverinfo='text', text = ~paste(PASA,'</br></br>', CapHBU)) %>%
+  layout(barmode='group',
+         xaxis=list(type="category"))
+
+hbu_bar
+```
+
+
+
+**NHNW Capacity**
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE,}
+nhnw_bar <- plot_ly(All_Caps, x=~Year, y=~CapNHNW, type='bar', color=~PASA, colors="Accent", hoverinfo='text', text = ~paste(PASA,'</br></br>', CapNHNW)) %>%
+  layout(barmode='group',
+         xaxis=list(type="category"))
+
+nhnw_bar
+```
+
+
+**WBNH Capacity**
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE,}
+wbnh_bar <- plot_ly(All_Caps, x=~Year, y=~CapWBNH, type='bar', color=~PASA, colors="Accent", hoverinfo='text', text = ~paste(PASA,'</br></br>', CapWBNH)) %>%
+  layout(barmode='group',
+         xaxis=list(type="category"))
+
+wbnh_bar
+```
+
+
+
+
+
 
