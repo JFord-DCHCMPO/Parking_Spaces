@@ -1,0 +1,463 @@
+---
+title: "Durham Update"
+author: "Jacob Ford DCHC MPO"
+date: "3/3/2021"
+output: html_document
+---
+
+Using updated data for both Durham, both parking spaces and ultimately capacity were recalculated for Durham and Duke University. 
+
+Using the [Downtown Durham Parking Study](https://www.parkdurham.org/DocumentCenter/View/119/Durham-Final-Report--Action-Plan-PDF "DDPS") 2018 total parking data and capacity was collected. For Duke University, a 2015 inventory of parking spaces was used to update the base year. Future projections are based off employment growth and the distribution from the Visitor category to trip purposes is based off peak trip attraction share, mirroring the previous methodology. 
+
+
+**Methodology**
+
+The Downtown Durham parking Study (DDPS) only looked at a portion of the Durham PASA area. 
+
+![DDPS Study Area, page 6](DDPS Study Area.PNG)
+
+Total parking spaces from the DDPS equalled 10,637 after factoring out residential trips and only including those spots within the Durham PASA. Total Parking Uses equalled 15,332, or when doubled equals total capacity of 30,664. 
+
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
+##load data
+
+library(xlsx)
+library(readxl)
+library(plotly)
+library(sf)
+library(dplyr)
+library(tidygeocoder)
+library(leaflet)
+library(rgdal)
+library(dplyr)
+library(rmarkdown)
+library(crosstalk)
+library(lubridate)
+library(htmltools)
+library(remotes)
+SE_2013 <- tcadr::read_tcad("C:/Users/JacobFo/OneDrive - City of Durham/SE_2013-rev.bin")
+SE_2016<- tcadr::read_tcad ("SE_2016.BIN")
+
+SE_2025 <- tcadr::read_tcad("C:/Users/JacobFo/OneDrive - City of Durham/MTP Work/TRM SE Data Inputs/2025/SE_2025.bin")
+
+SE_2045 <- tcadr::read_tcad("C:/Users/JacobFo/OneDrive - City of Durham/MTP Work/TRM SE Data Inputs/2045/SE_2045.bin")
+
+
+
+Stud_Off_2045 <- tcadr::read_tcad("C:/Users/JacobFo/OneDrive - City of Durham/MTP Work/TRM MTP Inputs Scenario Years/2045 MTP wAmendments/Input/Univ/Stud_Off Total 2045.bin")
+
+
+
+library(dplyr)
+
+SE_2016_sum <- SE_2016 %>%
+  group_by(PASA) %>%
+  summarize(n = n(),
+            work = sum(Industry + Office + Service_RateLow + Service_RateHigh + Retail),
+            vistor = sum(Service_RateLow + Service_RateHigh + Retail))
+
+SE_2025_sum <- SE_2025 %>%
+  group_by(PASA) %>%
+  summarize(n = n(),
+            work = sum(Industry + Office + Service_RateLow + Service_RateHigh + Retail),
+            vistor = sum(Service_RateLow + Service_RateHigh + Retail))
+
+
+SE_2045_sum <- SE_2045 %>%
+  group_by(PASA) %>%
+  summarize(n = n(),
+            work = sum(Industry + Office + Service_RateLow + Service_RateHigh + Retail),
+            vistor = sum(Service_RateLow + Service_RateHigh + Retail))
+
+SE_2045_sum$University <- NA
+
+SE_2045_sum$University[2] <- sum(Stud_Off_2045$UNC)
+SE_2045_sum$University[3] <- sum(Stud_Off_2045$DUKE)
+SE_2045_sum$University[4] <- sum(Stud_Off_2045$NCSU)
+SE_2045_sum$University[5] <- sum(Stud_Off_2045$NCCU)
+
+SE_2045_sum=SE_2045_sum[-1,]
+
+
+
+
+###Add Park Capcity files
+ParkCap_2013 <- tcadr::read_tcad("C:/Users/JacobFo/OneDrive - City of Durham/MTP Work/TRM MTP Inputs Scenario Years/2013 Base Year/Input/Programs/Parkcap.bin")
+ParkCap_2016 <- tcadr::read_tcad("C:/Users/JacobFo/TRMv6.2/Original TRMv6.2_2016/Input/Programs/Parkcap.bin")
+ParkCap_2025 <- tcadr::read_tcad("C:/Users/JacobFo/OneDrive - City of Durham/MTP Work/TRM MTP Inputs Scenario Years/2025 MTP wAmendments/Input/Programs/Parkcap.bin")
+ParkCap_2035 <- tcadr::read_tcad("C:/Users/JacobFo/OneDrive - City of Durham/MTP Work/TRM MTP Inputs Scenario Years/2035 MTP wAmendments/Input/Programs/Parkcap.bin")
+ParkCap_2045 <- tcadr::read_tcad("C:/Users/JacobFo/OneDrive - City of Durham/MTP Work/TRM MTP Inputs Scenario Years/2045 MTP wAmendments/Input/Programs/Parkcap.bin")
+
+ParkCap_2013$Year <- 2013
+ParkCap_2016$Year <- 2016
+ParkCap_2025$Year <- 2025
+ParkCap_2035$Year <- 2035
+ParkCap_2045$Year <- 2045
+
+All_Caps <- rbind(ParkCap_2013, ParkCap_2016, ParkCap_2025, ParkCap_2035, ParkCap_2045)
+
+labels = c("1 = UNC Campus",
+"2 = Duke Campus",
+"3 = NCSU Campus",
+"4 = NCCU Campus",
+"5 = Chapel Hill CBD",
+"6 = Durham CBD",
+"7 = Raleigh CBD",
+"8 = Carrboro CBD",
+"9 = Hillsborough CBD",
+"10=RDU"
+
+
+)
+
+levels = c(1,2,3,4,5,6,7,8,9,10)
+
+All_Caps$PASA <- ordered(All_Caps$PASA,
+                         levels=levels,
+                         labels=labels)
+
+library(lubridate)
+
+lubridate::ymd(All_Caps$Year, truncated=2L)
+
+All_Caps$Tot_Cap <- All_Caps$CapHBW + All_Caps$CapHBO + All_Caps$CapHBSH + All_Caps$CapHBU + All_Caps$CapNHNW +All_Caps$CapWBNH 
+
+library(readxl)
+parkingspaces <-read_excel("parkingspaces.xlsx")
+```
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(dplyr)
+durham_spaces <- parkingspaces %>%
+  filter(parkingspaces$PASA == '6 = Durham CBD*')
+
+
+add_row(durham_spaces, PASA= "6 = Durham CBD*", Year = 2018, Total =10637, Work = durham_spaces$Total[durham_spaces$Year==2018]  )
+
+durham_spaces[,-1] <- round(durham_spaces[,-1], digits=0)
+```
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
+
+durham_spaces <- add_row(durham_spaces, PASA= "Durham Updated BY", Year = 2018, Total =10637, Work = 10637* (durham_spaces$Work[durham_spaces$Year==2013]/durham_spaces$Total[durham_spaces$Year==2013]), Visitors = 10637* (durham_spaces$Visitors[durham_spaces$Year==2013]/durham_spaces$Total[durham_spaces$Year==2013]))
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(DT)
+durham_spaces[,-1] <- round(durham_spaces[,-1], digits=0)
+datatable(durham_spaces)
+```
+
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
+durham_spaces$Capacity <- NA
+
+durham_spaces$Capacity[1] <- ParkCap_2013$CapHBW[ParkCap_2013$PASA==6] + ParkCap_2013$CapHBO[ParkCap_2013$PASA==6]+ ParkCap_2013$CapHBSH[ParkCap_2013$PASA==6]+ ParkCap_2013$CapNHNW[ParkCap_2013$PASA==6]+ ParkCap_2013$CapWBNH[ParkCap_2013$PASA==6]
+
+durham_spaces$Capacity[2] <- ParkCap_2016$CapHBW[ParkCap_2016$PASA==6] + ParkCap_2016$CapHBO[ParkCap_2016$PASA==6]+ ParkCap_2016$CapHBSH[ParkCap_2016$PASA==6]+ ParkCap_2016$CapNHNW[ParkCap_2016$PASA==6]+ ParkCap_2016$CapWBNH[ParkCap_2016$PASA==6]
+
+durham_spaces$Capacity[3] <-ParkCap_2025$CapHBW[ParkCap_2025$PASA==6] + ParkCap_2025$CapHBO[ParkCap_2025$PASA==6]+ ParkCap_2025$CapHBSH[ParkCap_2025$PASA==6]+ ParkCap_2025$CapNHNW[ParkCap_2025$PASA==6]+ ParkCap_2025$CapWBNH[ParkCap_2025$PASA==6]
+
+durham_spaces$Capacity[4] <-ParkCap_2045$CapHBW[ParkCap_2045$PASA==6] + ParkCap_2045$CapHBO[ParkCap_2045$PASA==6]+ ParkCap_2045$CapHBSH[ParkCap_2045$PASA==6]+ ParkCap_2045$CapNHNW[ParkCap_2045$PASA==6]+ ParkCap_2045$CapWBNH[ParkCap_2045$PASA==6]
+
+durham_spaces$Capacity[5]<-30664
+
+durham_spaces
+```
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(DT)
+
+datatable(durham_spaces)
+```
+
+Annual Growth rate of Durham Employment from 2045 to 2016: 
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+durham_emp_growth<-log((SE_2045_sum$work[SE_2045_sum$PASA==6])/(SE_2016_sum$work[SE_2016_sum$PASA==6]))/(2045-2016)
+durham_emp_growth
+
+```
+Annual Growth rate of Durham Visitor (Retail + Service) from 2045 to 2016:
+
+```{r}
+durham_visitor_growth<-log((SE_2045_sum$vistor[SE_2045_sum$PASA==6])/(SE_2016_sum$vistor[SE_2016_sum$PASA==6]))/(2045-2016)
+```
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+##add 2020
+durham_spaces <- add_row(durham_spaces, PASA= "Durham Forecasted", Year = 2020, Work = (durham_spaces$Work[durham_spaces$Year==2018]*(1+durham_emp_growth)^(2020-2018)), Visitors =(durham_spaces$Visitors[durham_spaces$Year==2018]*(1+durham_visitor_growth)^(2020-2018)))
+
+durham_spaces$Total[durham_spaces$Year==2020] <- durham_spaces$Work[durham_spaces$Year==2020] +durham_spaces$Visitors[durham_spaces$Year==2020]
+##add capacity - keep ratio of 2018 space to ratio constant
+durham_spaces$Capacity[durham_spaces$Year==2020]<- (durham_spaces$Capacity[durham_spaces$Year==2018]/durham_spaces$Total[durham_spaces$Year==2018])*durham_spaces$Total[durham_spaces$Year==2020]
+
+##add 2030
+durham_spaces <- add_row(durham_spaces, PASA= "Durham Forecasted", Year = 2030, Work = (durham_spaces$Work[durham_spaces$Year==2018]*(1+durham_emp_growth)^(2030-2018)), Visitors =(durham_spaces$Visitors[durham_spaces$Year==2018]*(1+durham_visitor_growth)^(2030-2018)))
+
+durham_spaces$Total[durham_spaces$Year==2030] <- durham_spaces$Work[durham_spaces$Year==2030] +durham_spaces$Visitors[durham_spaces$Year==2030]
+
+##add capacity - keep ratio of 2018 space to ratio constant
+durham_spaces$Capacity[durham_spaces$Year==2030]<- (durham_spaces$Capacity[durham_spaces$Year==2018]/durham_spaces$Total[durham_spaces$Year==2018])*durham_spaces$Total[durham_spaces$Year==2030]
+
+##add 2040
+durham_spaces <- add_row(durham_spaces, PASA= "Durham Forecasted", Year = 2040, Work = (durham_spaces$Work[durham_spaces$Year==2018]*(1+durham_emp_growth)^(2040-2018)), Visitors =(durham_spaces$Visitors[durham_spaces$Year==2018]*(1+durham_visitor_growth)^(2040-2018)))
+
+durham_spaces$Total[durham_spaces$Year==2040] <- durham_spaces$Work[durham_spaces$Year==2040] +durham_spaces$Visitors[durham_spaces$Year==2040]
+
+##add capacity - keep ratio of 2018 space to ratio constant
+durham_spaces$Capacity[durham_spaces$Year==2040]<- (durham_spaces$Capacity[durham_spaces$Year==2018]/durham_spaces$Total[durham_spaces$Year==2018])*durham_spaces$Total[durham_spaces$Year==2040]
+
+##add 2050
+durham_spaces <- add_row(durham_spaces, PASA= "Durham Forecasted", Year = 2050, Work = (durham_spaces$Work[durham_spaces$Year==2018]*(1+durham_emp_growth)^(2050-2018)), Visitors =(durham_spaces$Visitors[durham_spaces$Year==2018]*(1+durham_visitor_growth)^(2050-2018)))
+
+durham_spaces$Total[durham_spaces$Year==2050] <- durham_spaces$Work[durham_spaces$Year==2050] +durham_spaces$Visitors[durham_spaces$Year==2050]
+
+##add capacity - keep ratio of 2018 space to ratio constant
+durham_spaces$Capacity[durham_spaces$Year==2050]<- (durham_spaces$Capacity[durham_spaces$Year==2018]/durham_spaces$Total[durham_spaces$Year==2018])*durham_spaces$Total[durham_spaces$Year==2050]
+
+```   
+
+
+
+
+
+
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+durham_spaces$Capacity_Uses <- durham_spaces$Capacity/2
+durham_spaces[,-1] <- round(durham_spaces[,-1], digits=0)
+datatable(durham_spaces)
+```
+
+
+
+
+##load the Pk Attraction by PASA Data
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
+PK_HBW <- tcadr::read_tcad("C:/Users/JacobFo/TRMv6.2/Original TRMv6.2_2016/Interim/PASAHBW_PK.BIN")
+
+PK_SHP <- tcadr::read_tcad("C:/Users/JacobFo/TRMv6.2/Original TRMv6.2_2016/Interim/PASASHP_PK.BIN")
+PK_SCH <- tcadr::read_tcad("C:/Users/JacobFo/TRMv6.2/Original TRMv6.2_2016/Interim/PASASCH_PK.BIN")
+PK_HBO <- tcadr::read_tcad("C:/Users/JacobFo/TRMv6.2/Original TRMv6.2_2016/Interim/PASAOTH_PK.BIN")
+PK_NHNW <- tcadr::read_tcad("C:/Users/JacobFo/TRMv6.2/Original TRMv6.2_2016/Interim/PASANHNW_PK.BIN")
+PK_WBNH <- tcadr::read_tcad("C:/Users/JacobFo/TRMv6.2/Original TRMv6.2_2016/Interim/PASAWBNH_PK.BIN")
+
+PK_HBW$PASA[1] <- 1
+PK_HBW$PASA[2] <- 2
+PK_HBW$PASA[3] <- 3
+PK_HBW$PASA[4] <- 4
+PK_HBW$PASA[5] <- 5
+PK_HBW$PASA[6] <- 6
+PK_HBW$PASA[7] <- 7
+PK_HBW$PASA[8] <- 8
+PK_HBW$PASA[9] <- 9
+
+PK_HBO$PASA[1] <- 1
+PK_HBO$PASA[2] <- 2
+PK_HBO$PASA[3] <- 3
+PK_HBO$PASA[4] <- 4
+PK_HBO$PASA[5] <- 5
+PK_HBO$PASA[6] <- 6
+PK_HBO$PASA[7] <- 7
+PK_HBO$PASA[8] <- 8
+PK_HBO$PASA[9] <- 9
+
+PK_NHNW$PASA[1] <- 1
+PK_NHNW$PASA[2] <- 2
+PK_NHNW$PASA[3] <- 3
+PK_NHNW$PASA[4] <- 4
+PK_NHNW$PASA[5] <- 5
+PK_NHNW$PASA[6] <- 6
+PK_NHNW$PASA[7] <- 7
+PK_NHNW$PASA[8] <- 8
+PK_NHNW$PASA[9] <- 9
+
+
+PK_SCH$PASA[1] <- 1
+PK_SCH$PASA[2] <- 2
+PK_SCH$PASA[3] <- 3
+PK_SCH$PASA[4] <- 4
+PK_SCH$PASA[5] <- 5
+PK_SCH$PASA[6] <- 6
+PK_SCH$PASA[7] <- 7
+PK_SCH$PASA[8] <- 8
+PK_SCH$PASA[9] <- 9
+
+
+PK_SHP$PASA[1] <- 1
+PK_SHP$PASA[2] <- 2
+PK_SHP$PASA[3] <- 3
+PK_SHP$PASA[4] <- 4
+PK_SHP$PASA[5] <- 5
+PK_SHP$PASA[6] <- 6
+PK_SHP$PASA[7] <- 7
+PK_SHP$PASA[8] <- 8
+PK_SHP$PASA[9] <- 9
+
+PK_WBNH$PASA[1] <- 1
+PK_WBNH$PASA[2] <- 2
+PK_WBNH$PASA[3] <- 3
+PK_WBNH$PASA[4] <- 4
+PK_WBNH$PASA[5] <- 5
+PK_WBNH$PASA[6] <- 6
+PK_WBNH$PASA[7] <- 7
+PK_WBNH$PASA[8] <- 8
+PK_WBNH$PASA[9] <- 9
+
+
+
+```
+
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
+durham_attractions <- data.frame(matrix(ncol =6, nrow = 1))
+x <- c("HBW", "HBShop", "HBO", "WBNH", "NHNW", "Total")
+colnames(durham_attractions) <- x
+
+
+
+
+
+durham_attractions$HBW<-sum(PK_HBW$A[PK_HBW$PASA==6])
+durham_attractions$HBShop<-sum(PK_SHP$A[PK_SHP$PASA==6])
+durham_attractions$HBO<-sum(PK_HBO$A[PK_HBO$PASA==6])
+durham_attractions$WBNH<-sum(PK_WBNH$A[PK_WBNH$PASA==6])
+durham_attractions$NHNW<-sum(PK_NHNW$A[PK_NHNW$PASA==6])
+
+durham_attractions$Total<-durham_attractions$HBW+
+  durham_attractions$HBShop+
+  durham_attractions$HBO+
+  durham_attractions$WBNH+
+  durham_attractions$NHNW
+  
+durham_attractions
+
+```
+
+**Trips Attracted to Durham from TRMv6.2 2016 input. **
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+durham_attractions<- round(durham_attractions, digits=0)
+datatable(durham_attractions)
+```
+
+
+**Final Capacity Projections**
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+final_capacity <- tail(durham_spaces, n=5)
+datatable(final_capacity)
+
+
+```
+
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
+final_capacity$HBW <- NA
+final_capacity$HBShop <- NA
+final_capacity$HBO <- NA
+final_capacity$WBNH <- NA
+final_capacity$NHNW <- NA
+final_capacity$Total_Cap <- NA
+
+##HBW
+
+final_capacity$HBW[1] <- (final_capacity$Work[final_capacity$Year==2018]/final_capacity$Total[final_capacity$Year==2018])*final_capacity$Capacity[final_capacity$Year==2018]
+final_capacity$HBW[2] <- final_capacity$HBW[1] * (1+durham_emp_growth)^(2020-2018)
+final_capacity$HBW[3] <- final_capacity$HBW[1] * (1+durham_emp_growth)^(2030-2018)
+final_capacity$HBW[4] <- final_capacity$HBW[1] * (1+durham_emp_growth)^(2040-2018)
+final_capacity$HBW[5] <- final_capacity$HBW[1] * (1+durham_emp_growth)^(2050-2018)
+
+final_capacity$HBW <- round(final_capacity$HBW, 0)
+
+##HBSHOP
+final_capacity$HBShop[1] <- (durham_attractions$HBShop/(durham_attractions$HBShop + durham_attractions$WBNH + durham_attractions$NHNW + durham_attractions$HBO))*(final_capacity$Capacity[final_capacity$Year==2018]/final_capacity$Total[final_capacity$Year==2018] * final_capacity$Visitors[final_capacity$Year==2018])
+
+final_capacity$HBShop[2] <- final_capacity$HBShop[1] * (1+durham_visitor_growth)^(2020-2018)
+final_capacity$HBShop[3] <- final_capacity$HBShop[1] * (1+durham_visitor_growth)^(2030-2018)
+final_capacity$HBShop[4] <- final_capacity$HBShop[1] * (1+durham_visitor_growth)^(2040-2018)
+final_capacity$HBShop[5] <- final_capacity$HBShop[1] * (1+durham_visitor_growth)^(2050-2018)
+final_capacity$HBShop <- round(final_capacity$HBShop, 0)
+
+##HBO
+final_capacity$HBO[1] <- (durham_attractions$HBO/(durham_attractions$HBShop + durham_attractions$WBNH + durham_attractions$NHNW + durham_attractions$HBO))*(final_capacity$Capacity[final_capacity$Year==2018]/final_capacity$Total[final_capacity$Year==2018] * final_capacity$Visitors[final_capacity$Year==2018])
+
+final_capacity$HBO[2] <- final_capacity$HBO[1] * (1+durham_visitor_growth)^(2020-2018)
+final_capacity$HBO[3] <- final_capacity$HBO[1] * (1+durham_visitor_growth)^(2030-2018)
+final_capacity$HBO[4] <- final_capacity$HBO[1] * (1+durham_visitor_growth)^(2040-2018)
+final_capacity$HBO[5] <- final_capacity$HBO[1] * (1+durham_visitor_growth)^(2050-2018)
+final_capacity$HBO <- round(final_capacity$HBO, 0)
+
+##WBNH
+final_capacity$WBNH[1] <- (durham_attractions$WBNH/(durham_attractions$HBShop + durham_attractions$WBNH + durham_attractions$NHNW + durham_attractions$HBO))*(final_capacity$Capacity[final_capacity$Year==2018]/final_capacity$Total[final_capacity$Year==2018] * final_capacity$Visitors[final_capacity$Year==2018])
+
+final_capacity$WBNH[2] <- final_capacity$WBNH[1] * (1+durham_visitor_growth)^(2020-2018)
+final_capacity$WBNH[3] <- final_capacity$WBNH[1] * (1+durham_visitor_growth)^(2030-2018)
+final_capacity$WBNH[4] <- final_capacity$WBNH[1] * (1+durham_visitor_growth)^(2040-2018)
+final_capacity$WBNH[5] <- final_capacity$WBNH[1] * (1+durham_visitor_growth)^(2050-2018)
+final_capacity$WBNH <- round(final_capacity$WBNH, 0)
+
+##NHNW
+
+final_capacity$NHNW[1] <- (durham_attractions$NHNW/(durham_attractions$HBShop + durham_attractions$WBNH + durham_attractions$NHNW + durham_attractions$HBO))*(final_capacity$Capacity[final_capacity$Year==2018]/final_capacity$Total[final_capacity$Year==2018] * final_capacity$Visitors[final_capacity$Year==2018])
+
+final_capacity$NHNW[2] <- final_capacity$HBO[1] * (1+durham_visitor_growth)^(2020-2018)
+final_capacity$NHNW[3] <- final_capacity$HBO[1] * (1+durham_visitor_growth)^(2030-2018)
+final_capacity$NHNW[4] <- final_capacity$HBO[1] * (1+durham_visitor_growth)^(2040-2018)
+final_capacity$NHNW[5] <- final_capacity$HBO[1] * (1+durham_visitor_growth)^(2050-2018)
+final_capacity$NHNW <- round(final_capacity$NHNW, 0)
+
+
+final_capacity$Total_Cap <- final_capacity$HBW + final_capacity$HBO + final_capacity$HBShop + final_capacity$WBNH + final_capacity$NHNW
+
+
+
+```
+
+
+**Final Capacity Comparison**
+
+
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+datatable(durham_spaces)
+```
+
+
+**Final Parking Capacity by Trip Purpose, distributed using the trip attracted share**
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+datatable(final_capacity)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

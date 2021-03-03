@@ -42,8 +42,8 @@ library(remotes)
 ```
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, results = 'hide'}
-devtools::install_github("wsp-sag/tcadr")
-install.packages('htmltools')
+##devtools::install_github("wsp-sag/tcadr")
+##install.packages('htmltools')
 library(tcadr)
 
 ##read_tcad("inst/extdata/TransitR.bin")
@@ -52,6 +52,7 @@ library(tcadr)
 
 
 SE_2013 <- tcadr::read_tcad("C:/Users/JacobFo/OneDrive - City of Durham/SE_2013-rev.bin")
+SE_2016<- tcadr::read_tcad ("SE_2016.BIN")
 
 
 SE_2025 <- tcadr::read_tcad("C:/Users/JacobFo/OneDrive - City of Durham/MTP Work/TRM SE Data Inputs/2025/SE_2025.bin")
@@ -74,6 +75,12 @@ SE_2025_sum <- SE_2025 %>%
 
 
 SE_2045_sum <- SE_2045 %>%
+  group_by(PASA) %>%
+  summarize(n = n(),
+            work = sum(Industry + Office + Service_RateLow + Service_RateHigh + Retail),
+            vistor = sum(Service_RateLow + Service_RateHigh + Retail))
+
+SE_2016_sum <- SE_2016 %>%
   group_by(PASA) %>%
   summarize(n = n(),
             work = sum(Industry + Office + Service_RateLow + Service_RateHigh + Retail),

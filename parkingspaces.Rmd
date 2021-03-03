@@ -7,11 +7,19 @@ output: html_document
 
 Parking spaces 
 
-Sources: 
+**Sources:**
 
-2013, 2025 and 2045: 
 
-[2016 update Source '2016_Ref' tab](https://docs.google.com/spreadsheets/d/10gmqbC3IzuMr70pT1adIl_eRlYauPS2T/edit#gid=748799042 "Mei's 2016 Parking Inventory)
+[2013 Source 'Cap_E' Tab, Row 18](https://docs.google.com/spreadsheets/d/1WBSfRdTZsmZuUM5loBz3phY5CECVBygo/edit#gid=1258207298 "2013 Calculation")
+
+[2016 update Source '2016_Ref' tab](https://docs.google.com/spreadsheets/d/10gmqbC3IzuMr70pT1adIl_eRlYauPS2T/edit#gid=748799042 "Mei's 2016 Parking Inventory")
+
+
+[2025 Source 'Cap_E' Tab, Row 23](https://docs.google.com/spreadsheets/d/1WBSfRdTZsmZuUM5loBz3phY5CECVBygo/edit#gid=1258207298 "2025 Calculation")
+
+[2035 Source 'Cap_'E Tab, Row 23](https://docs.google.com/spreadsheets/d/1ucD5uRabUwJ4egfoXGO06EfKNyRHBWKH/edit#gid=774690020 "2035 Calculation")
+
+[2045 Source 'Cap_E' Tab, Row 23](https://docs.google.com/spreadsheets/u/1/d/1Jc5vPo6ptHY3e3eU5rqNzr4y0tUI6p-q/edit?usp=drive_web&ouid=116527721669642028928&rtpof=true "2045 Calculation")
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
 library(xlsx)

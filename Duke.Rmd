@@ -1,0 +1,12 @@
+---
+title: "Duke Update"
+author: "Jacob Ford DCHC MPO"
+date: "3/3/2021"
+output: html_document
+---
+
+
+Using updated data for both Durham, both parking spaces and ultimately capacity were recalculated for Durham and Duke University. 
+
+For Duke University, a 2015 inventory of parking spaces was used to update the base year. Future projections are based off employment growth and the distribution from the Visitor category to trip purposes is based off peak trip attraction share, mirroring the previous methodology. 
+
