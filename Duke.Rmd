@@ -130,7 +130,7 @@ duke$`Work Spaces`[duke$Year==2015] <- duke$`Total Spaces`[duke$Year==2015] *( d
 duke$`Visitor Spaces`[duke$Year==2015] <- duke$`Total Spaces`[duke$Year==2015] *( duke$`Visitor Spaces`[duke$Year==2013]/duke$`Total Spaces`[duke$Year==2013])
 duke$`University Spaces`[duke$Year==2015] <- duke$`Total Spaces`[duke$Year==2015] *( duke$`University Spaces`[duke$Year==2013]/duke$`Total Spaces`[duke$Year==2013])
 
-
+duke
 
 
 ```
@@ -155,6 +155,15 @@ duke$`University Spaces`[duke$Year==2030] <-duke$`University Spaces`[duke$Year==
 duke$`University Spaces`[duke$Year==2040] <-duke$`University Spaces`[duke$Year==2015]*(1+duke_uni_growth)^(2040-2015)
 duke$`University Spaces`[duke$Year==2050] <-duke$`University Spaces`[duke$Year==2015]*(1+duke_uni_growth)^(2050-2015)
 
+
+
+
+duke$`Total Spaces`<- duke$`Work Spaces`+duke$`Visitor Spaces`+duke$`University Spaces`
+duke[,-1] <- round(duke[,-1], digits=0)
+
+
+```
+```{r}
 duke$`Capacity Total`[duke$Year==2015]<-duke$`Capacity Total`[duke$Year==2013]/duke$`Total Spaces`[duke$Year==2013] * duke$`Total Spaces`[duke$Year==2015]
 duke$`Capacity Total`[duke$Year==2020]<-duke$`Capacity Total`[duke$Year==2013]/duke$`Total Spaces`[duke$Year==2013] * duke$`Total Spaces`[duke$Year==2020]
 duke$`Capacity Total`[duke$Year==2030]<-duke$`Capacity Total`[duke$Year==2013]/duke$`Total Spaces`[duke$Year==2013] * duke$`Total Spaces`[duke$Year==2030]
@@ -162,11 +171,28 @@ duke$`Capacity Total`[duke$Year==2040]<-duke$`Capacity Total`[duke$Year==2013]/d
 duke$`Capacity Total`[duke$Year==2050]<-duke$`Capacity Total`[duke$Year==2013]/duke$`Total Spaces`[duke$Year==2013] * duke$`Total Spaces`[duke$Year==2050]
 
 duke$`Capacity Uses` <- duke$`Capacity Total`/2
+duke[,-1] <- round(duke[,-1], digits=0)
+datatable(duke)
+
+```
+
+
+
+```{r}
+duke <- add_row(duke)
+duke$Year[7]<-"2045 Original"
+
+
+duke$`Work Spaces`[7] <- parkingspaces$Work[parkingspaces$PASA=="2 = Duke Campus" & parkingspaces$Year==2045]
+duke$`University Spaces`[7] <- parkingspaces$Uni[parkingspaces$PASA=="2 = Duke Campus" & parkingspaces$Year==2045]
+duke$`Visitor Spaces`[7] <- parkingspaces$Visitors[parkingspaces$PASA=="2 = Duke Campus" & parkingspaces$Year==2045]
+duke$`Capacity Total`[7] <- ParkCap_2045$CapHBW[ParkCap_2045$PASA==2] + ParkCap_2045$CapHBO[ParkCap_2045$PASA==2]+ ParkCap_2045$CapHBSH[ParkCap_2045$PASA==2]+ ParkCap_2045$CapNHNW[ParkCap_2045$PASA==2]+ ParkCap_2045$CapWBNH[ParkCap_2045$PASA==2]+ ParkCap_2045$CapHBU[ParkCap_2045$PASA==2]
+
 
 duke$`Total Spaces`<- duke$`Work Spaces`+duke$`Visitor Spaces`+duke$`University Spaces`
-duke[,-1] <- round(duke[,-1], digits=0)
+
+
 
 datatable(duke)
 ```
-
 
