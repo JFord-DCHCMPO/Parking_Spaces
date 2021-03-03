@@ -285,25 +285,8 @@ $(document).ready(function () {
 <pre><code>## [1] 0.008040258</code></pre>
 <pre><code>## [1] 0.0003676391</code></pre>
 <pre><code>## [1] 0.01738445</code></pre>
-<div id="htmlwidget-674ad1c70b14f4b1839f" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-674ad1c70b14f4b1839f">{"x":{"filter":"none","data":[["1","2","3","4","5","6"],[2013,2015,2020,2030,2040,2050],[16977,15581,16218,17570,19035,20622],[3677,3375,3381,3393,3406,3418],[2297,2108,2298,2730,3244,3854],[22951,21064,21896,23693,25684,27894],[43950,40336,null,null,null,null],[87900,80673,null,null,null,null]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Year<\/th>\n      <th>Work Spaces<\/th>\n      <th>Visitor Spaces<\/th>\n      <th>University Spaces<\/th>\n      <th>Total Spaces<\/th>\n      <th>Capacity Uses<\/th>\n      <th>Capacity Total<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,2,3,4,5,6,7]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
-<pre class="r"><code>duke &lt;- add_row(duke)
-duke$Year[7]&lt;-&quot;2045 Original&quot;
-
-
-duke$`Work Spaces`[7] &lt;- parkingspaces$Work[parkingspaces$PASA==&quot;2 = Duke Campus&quot; &amp; parkingspaces$Year==2045]
-duke$`University Spaces`[7] &lt;- parkingspaces$Uni[parkingspaces$PASA==&quot;2 = Duke Campus&quot; &amp; parkingspaces$Year==2045]
-duke$`Visitor Spaces`[7] &lt;- parkingspaces$Visitors[parkingspaces$PASA==&quot;2 = Duke Campus&quot; &amp; parkingspaces$Year==2045]
-duke$`Capacity Total`[7] &lt;- ParkCap_2045$CapHBW[ParkCap_2045$PASA==2] + ParkCap_2045$CapHBO[ParkCap_2045$PASA==2]+ ParkCap_2045$CapHBSH[ParkCap_2045$PASA==2]+ ParkCap_2045$CapNHNW[ParkCap_2045$PASA==2]+ ParkCap_2045$CapWBNH[ParkCap_2045$PASA==2]+ ParkCap_2045$CapHBU[ParkCap_2045$PASA==2]
-
-
-duke$`Total Spaces`&lt;- duke$`Work Spaces`+duke$`Visitor Spaces`+duke$`University Spaces`
-
-
-
-datatable(duke)</code></pre>
-<div id="htmlwidget-b01153038f0cd87a6131" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-b01153038f0cd87a6131">{"x":{"filter":"none","data":[["1","2","3","4","5","6","7"],["2013","2015","2020","2030","2040","2050","2045 Original"],[16977,15581,16218,17570,19035,20622,18658.9282263683],[3677,3375,3381,3393,3406,3418,4178.99943690811],[2297,2108,2298,2730,3244,3854,2217.32502569373],[22951,21064,21897,23693,25685,27894,25055.2526889702],[43950,40336,null,null,null,null,null],[87900,80673,null,null,null,null,86540]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Year<\/th>\n      <th>Work Spaces<\/th>\n      <th>Visitor Spaces<\/th>\n      <th>University Spaces<\/th>\n      <th>Total Spaces<\/th>\n      <th>Capacity Uses<\/th>\n      <th>Capacity Total<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[2,3,4,5,6,7]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-4830cf148df10e5792de" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-4830cf148df10e5792de">{"x":{"filter":"none","data":[["1","2","3","4","5","6","7"],["2013","2015","2020","2030","2040","2050","2045 Original"],[16977,15581,16218,17570,19035,20622,18659],[3677,3375,3381,3393,3406,3418,4179],[2297,2108,2298,2730,3244,3854,2217],[22951,21064,21897,23693,25685,27894,25055],[43950,40336,41931,45371,49184,53415,null],[87900,80673,83861,90743,98368,106831,86540]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Year<\/th>\n      <th>Work Spaces<\/th>\n      <th>Visitor Spaces<\/th>\n      <th>University Spaces<\/th>\n      <th>Total Spaces<\/th>\n      <th>Capacity Uses<\/th>\n      <th>Capacity Total<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[2,3,4,5,6,7]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 
 
 

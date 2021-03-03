@@ -108,7 +108,7 @@ duke_uni_growth
 ```
 
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results = 'hide'}
 duke <- data.frame(matrix(ncol =7, nrow = 6))
 t <- c("Year", "Work Spaces", "Visitor Spaces", "University Spaces", "Total Spaces" ,"Capacity Uses", "Capacity Total")
 colnames(duke) <- t
@@ -137,7 +137,7 @@ duke
 
 
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results = 'hide'}
 ##forecastING 
 
 duke$`Work Spaces`[duke$Year==2020] <-duke$`Work Spaces`[duke$Year==2015]*(1+duke_emp_growth)^(2020-2015)
@@ -159,11 +159,13 @@ duke$`University Spaces`[duke$Year==2050] <-duke$`University Spaces`[duke$Year==
 
 
 duke$`Total Spaces`<- duke$`Work Spaces`+duke$`Visitor Spaces`+duke$`University Spaces`
-duke[,-1] <- round(duke[,-1], digits=0)
+
 
 
 ```
-```{r}
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 duke$`Capacity Total`[duke$Year==2015]<-duke$`Capacity Total`[duke$Year==2013]/duke$`Total Spaces`[duke$Year==2013] * duke$`Total Spaces`[duke$Year==2015]
 duke$`Capacity Total`[duke$Year==2020]<-duke$`Capacity Total`[duke$Year==2013]/duke$`Total Spaces`[duke$Year==2013] * duke$`Total Spaces`[duke$Year==2020]
 duke$`Capacity Total`[duke$Year==2030]<-duke$`Capacity Total`[duke$Year==2013]/duke$`Total Spaces`[duke$Year==2013] * duke$`Total Spaces`[duke$Year==2030]
@@ -172,13 +174,13 @@ duke$`Capacity Total`[duke$Year==2050]<-duke$`Capacity Total`[duke$Year==2013]/d
 
 duke$`Capacity Uses` <- duke$`Capacity Total`/2
 duke[,-1] <- round(duke[,-1], digits=0)
-datatable(duke)
+
 
 ```
 
 
 
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 duke <- add_row(duke)
 duke$Year[7]<-"2045 Original"
 
@@ -192,7 +194,7 @@ duke$`Capacity Total`[7] <- ParkCap_2045$CapHBW[ParkCap_2045$PASA==2] + ParkCap_
 duke$`Total Spaces`<- duke$`Work Spaces`+duke$`Visitor Spaces`+duke$`University Spaces`
 
 
-
+duke[,-1] <- round(duke[,-1], digits=0)
 datatable(duke)
 ```
 
