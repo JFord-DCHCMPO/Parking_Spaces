@@ -1,15 +1,15 @@
 ---
-title: "Parking Study"
+title: "Parking Capacity Overview"
 output: html_document
 ---
 
 
 
-Parking Capacity Data is sourced from the ParkCap.bin file in the respective model scenario year 'Programs' folder within from the TRMv6.2 official svn repository.  
 
-Parking capacity is a composite measurement of the total supply of parking spaces and is measured by PASA type and trip purpose. It is a function of the base year (2013) and future scenario year parking spaces, current and future number of employee/enrollee in the PASA, and vehicles parked per space. The base year for the parking spaces is 2013, therefore all parking capacity below is based off 2013 data. Growth factors based off the employment growth for Workers (Total Employment), Visitors (Retail + Visitors) and University (Off-Campus Students). These were used to extend the 2013 base year to 2025-2035-2045 scenarios. 
+Parking capacity is a composite measurement of the total supply of parking spaces and is measured by PASA type and trip purpose. It has previously been calculated as a function of the base year (2013) and future scenario year parking spaces, current and future number of employee/enrollee in the PASA, and vehicles parked per space. The base year for the parking spaces is 2013, therefore all parking capacity below is based off 2013 data. Growth factors based off the employment growth for Workers (Total Employment), Visitors (Retail + Visitors) and University (Off-Campus Students). These were used to extend the 2013 base year to 2025-2035-2045 scenarios. Parking Capacity Data is sourced from the ParkCap.bin file in the respective model scenario year 'Programs' folder within from the TRMv6.2 official svn repository.  
 
-**Data Sources on ITRE Drive**
+
+**Original Data Sources on ITRE Drive**
 
 [2013 Source '2013_ParkCapBin' tab](https://docs.google.com/spreadsheets/d/1V8ewuzEgoqsqsj58juQLqc4XfVYAYUCc/edit#gid=1481906281 "2013 Calculation")
 
@@ -151,9 +151,13 @@ lubridate::ymd(All_Caps$Year, truncated=2L)
 ```
 
 
+\br
+\br
 
 
-**Existing Parking capacity data from SVN repository: **
+
+
+**Parking Capacity Datatable: **
 
 
 
@@ -167,7 +171,9 @@ datatable(All_Caps, filter='top',
 All_Caps$Tot_Cap <- All_Caps$CapHBW + All_Caps$CapHBO + All_Caps$CapHBSH + All_Caps$CapHBU + All_Caps$CapNHNW + All_Caps$CapWBNH 
 ```
 
+**Interactive Bar Charts**
 
+*Double click on a PASA to isolate in the graph*
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, eval=FALSE}
 library(plotly)

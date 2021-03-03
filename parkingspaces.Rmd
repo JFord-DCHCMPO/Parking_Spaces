@@ -5,9 +5,9 @@ date: "3/3/2021"
 output: html_document
 ---
 
-Parking spaces 
+Used to calculate parking capacity, parking spaces were collected in 2013 and updated for a select number of PASAs for 2016. 
 
-**Sources:**
+**Data Sources on ITRE Drive**
 
 
 [2013 Source 'Cap_E' Tab, Row 18](https://docs.google.com/spreadsheets/d/1WBSfRdTZsmZuUM5loBz3phY5CECVBygo/edit#gid=1258207298 "2013 Calculation")
@@ -46,6 +46,7 @@ parkingspaces <-read_excel("parkingspaces.xlsx")
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE,}
 library(DT)
+parkingspaces[,-1] <- round(parkingspaces[,-1], digits=0)
 datatable(parkingspaces, filter='top',
           caption="Parking Spaces for PASAs for 2013, 2016, 2025, 2035 and 2045")
 ```
