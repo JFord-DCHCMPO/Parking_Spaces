@@ -127,6 +127,10 @@ All_Caps$PASA <- ordered(All_Caps$PASA,
                          levels=levels,
                          labels=labels)
 
+library(lubridate)
+
+lubridate::ymd(All_Caps$Year, truncated=2L)
+
 ```
 
 
