@@ -1,12 +1,19 @@
 ---
-title: "parkingspaces"
+title: "Parking Spaces"
 author: "Jacob Ford DCHC MPO"
 date: "3/3/2021"
 output: html_document
 ---
 
+Parking spaces 
 
-```{r}
+Sources: 
+
+2013, 2025 and 2045: 
+
+[2016 update Source '2016_Ref' tab](https://docs.google.com/spreadsheets/d/10gmqbC3IzuMr70pT1adIl_eRlYauPS2T/edit#gid=748799042 "Mei's 2016 Parking Inventory)
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
 library(xlsx)
 library(readxl)
 library(plotly)
@@ -23,7 +30,93 @@ library(htmltools)
 library(remotes)
 ```
 
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
+library(readxl)
+parkingspaces <-read_excel("parkingspaces.xlsx")
 
 ```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE,}
+library(DT)
+datatable(parkingspaces, filter='top',
+          caption="Parking Spaces for PASAs for 2013, 2016, 2025, 2035 and 2045")
+```
+
+
+**Total parking spaces**
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+total_spaces <- plot_ly(parkingspaces, x=~Year, y=~Total, type='bar', color=~PASA, colors="Accent", hoverinfo='text', text = ~paste(PASA,'</br></br>', Total)) %>%
+  layout(barmode='group',
+         xaxis=list(type="category"))
+
+total_spaces
+```
+
+**Total Work spaces**
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE,}
+work_spaces <- plot_ly(parkingspaces, x=~Year, y=~Work, type='bar', color=~PASA, colors="Accent", hoverinfo='text', text = ~paste(PASA,'</br></br>', Work)) %>%
+  layout(barmode='group',
+         xaxis=list(type="category"))
+
+work_spaces
+```
+
+
+
+
+**Total Visitors spaces**
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE,}
+visitor_spaces <- plot_ly(parkingspaces, x=~Year, y=~Visitors, type='bar', color=~PASA, colors="Accent", hoverinfo='text', text = ~paste(PASA,'</br></br>', Visitors)) %>%
+  layout(barmode='group',
+         xaxis=list(type="category"))
+
+visitor_spaces
+```
+
+
+
+**Total University spaces**
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE,}
+uni_spaces <- plot_ly(parkingspaces, x=~Year, y=~Uni, type='bar', color=~PASA, colors="Accent", hoverinfo='text', text = ~paste(PASA,'</br></br>', Uni)) %>%
+  layout(barmode='group',
+         xaxis=list(type="category"))
+
+uni_spaces
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
