@@ -412,10 +412,10 @@ final_capacity$WBNH <- round(final_capacity$WBNH, 0)
 
 final_capacity$NHNW[1] <- (durham_attractions$NHNW/(durham_attractions$HBShop + durham_attractions$WBNH + durham_attractions$NHNW + durham_attractions$HBO))*(final_capacity$Capacity[final_capacity$Year==2018]/final_capacity$Total[final_capacity$Year==2018] * final_capacity$Visitors[final_capacity$Year==2018])
 
-final_capacity$NHNW[2] <- final_capacity$HBO[1] * (1+durham_visitor_growth)^(2020-2018)
-final_capacity$NHNW[3] <- final_capacity$HBO[1] * (1+durham_visitor_growth)^(2030-2018)
-final_capacity$NHNW[4] <- final_capacity$HBO[1] * (1+durham_visitor_growth)^(2040-2018)
-final_capacity$NHNW[5] <- final_capacity$HBO[1] * (1+durham_visitor_growth)^(2050-2018)
+final_capacity$NHNW[2] <- final_capacity$NHNW[1] * (1+durham_visitor_growth)^(2020-2018)
+final_capacity$NHNW[3] <- final_capacity$NHNW[1] * (1+durham_visitor_growth)^(2030-2018)
+final_capacity$NHNW[4] <- final_capacity$NHNW[1] * (1+durham_visitor_growth)^(2040-2018)
+final_capacity$NHNW[5] <- final_capacity$NHNW[1] * (1+durham_visitor_growth)^(2050-2018)
 final_capacity$NHNW <- round(final_capacity$NHNW, 0)
 
 
