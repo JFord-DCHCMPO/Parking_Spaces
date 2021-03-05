@@ -15,9 +15,12 @@ The Downtown Durham parking Study (DDPS) only looked at a portion of the Durham 
 
 ![DDPS Study Area, page 6](DDPS Study Area.PNG)
 
-Total parking spaces from the DDPS equalled 10,637 after factoring out residential trips and only including those spots within the Durham PASA.  The table below shows the existing 2013, 2016, 2025 and 2045 parking space data for Durham's PASA, along with the updated 2018 data from the DDPS. The total 10,637 parking spaces were distributed to Work and Visitor categories by keeping the 2016 distribution between the two categories constant (62% work and 38% visitor). 
+Total parking spaces from the DDPS equalled 10,637 after factoring out residential trips and only including those spots within the Durham PASA.  The table below shows the existing 2013, 2016, 2025 and 2045 parking space data for Durham's PASA, along with the updated 2018 data from the DDPS. The total 10,637 parking spaces were distributed to Work and Visitor categories by keeping the 2016 distribution between the two categories constant (62% work and 38% visitor), then calibrating to finally equal the final base year distribution of 8,000 worker spaces and 2,637 visitor spaces. 
 
-Annual growth factors for both work (total employment) and visitor (service + retail) employment are calculated and used to forecast future parking spaces in 2020, 2030, 2040 and 2050.  
+Capacity to worker space ratio = 1.4
+Capacity to visitor space ratio = 6.0
+
+Annual simplified growth factors for both work (total employment) and visitor (service + retail), future scenarios are projected. This scenario assumes double work parking spots by 2050 and triple visitor parking spaces by 2050. Scenarios are factored in 2020, 2030 and 2040 scenarios to the ultimate 2050 goal. 
 
 
 
@@ -130,6 +133,7 @@ parkingspaces <-read_excel("parkingspaces.xlsx")
 ```
 
 
+
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 library(dplyr)
 durham_spaces <- parkingspaces %>%
@@ -140,14 +144,14 @@ durham_spaces <- add_row(durham_spaces, PASA= "6 = Durham CBD*", Year = 2018, To
 
 durham_spaces[,-1] <- round(durham_spaces[,-1], digits=0)
 
-durham_spaces <- add_row(durham_spaces, PASA= "Durham Updated BY", Year = 2018, Total =10637, Work = 10637* (durham_spaces$Work[durham_spaces$Year==2013]/durham_spaces$Total[durham_spaces$Year==2013]), Visitors = 10637* (durham_spaces$Visitors[durham_spaces$Year==2013]/durham_spaces$Total[durham_spaces$Year==2013]))
+durham_spaces <- add_row(durham_spaces, PASA= "Durham Updated BY", Year = 2018, Total =10637, Work = 8000, Visitors = 2637)
 
 library(DT)
 durham_spaces[,-1] <- round(durham_spaces[,-1], digits=0)
 datatable(durham_spaces)
 ```
 
-From the DDPS, total parking uses equalled 15,332, or when doubled equals total capacity of 30,664. Using the ratio of 2018 DDPS capacity to total spaces, we factor the future parking spaces calculated in the previous step to come up with a future parking capacity figure. 
+Add the factoring of 1.4 for work spaces and 6 for visitors: 
 
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
@@ -161,7 +165,38 @@ durham_spaces$Capacity[3] <-ParkCap_2025$CapHBW[ParkCap_2025$PASA==6] + ParkCap_
 
 durham_spaces$Capacity[4] <-ParkCap_2045$CapHBW[ParkCap_2045$PASA==6] + ParkCap_2045$CapHBO[ParkCap_2045$PASA==6]+ ParkCap_2045$CapHBSH[ParkCap_2045$PASA==6]+ ParkCap_2045$CapNHNW[ParkCap_2045$PASA==6]+ ParkCap_2045$CapWBNH[ParkCap_2045$PASA==6]
 
-durham_spaces$Capacity[5]<-30664
+durham_spaces$Capacity[5]<- durham_spaces$Work[durham_spaces$Year==2018] * 1.4 + durham_spaces$Visitors[durham_spaces$Year==2018] * 6
+
+
+durham_spaces$Work_Capacity <- NA
+
+durham_spaces$Work_Capacity[1] <- ParkCap_2013$CapHBW[ParkCap_2013$PASA==6]
+
+durham_spaces$Work_Capacity[1] <- ParkCap_2013$CapHBW[ParkCap_2013$PASA==6]
+
+durham_spaces$Work_Capacity[2] <- ParkCap_2016$CapHBW[ParkCap_2016$PASA==6]
+
+durham_spaces$Work_Capacity[3] <-ParkCap_2025$CapHBW[ParkCap_2025$PASA==6]
+
+durham_spaces$Work_Capacity[4] <-ParkCap_2045$CapHBW[ParkCap_2045$PASA==6] 
+
+durham_spaces$Work_Capacity[5]<- durham_spaces$Work[durham_spaces$Year==2018] * 1.4
+
+
+durham_spaces$Visitors_Capacity <- NA
+
+durham_spaces$Visitors_Capacity[1] <-ParkCap_2013$CapHBO[ParkCap_2013$PASA==6]+ ParkCap_2013$CapHBSH[ParkCap_2013$PASA==6]+ ParkCap_2013$CapNHNW[ParkCap_2013$PASA==6]+ ParkCap_2013$CapWBNH[ParkCap_2013$PASA==6]
+
+durham_spaces$Visitors_Capacity[2] <- ParkCap_2016$CapHBO[ParkCap_2016$PASA==6]+ ParkCap_2016$CapHBSH[ParkCap_2016$PASA==6]+ ParkCap_2016$CapNHNW[ParkCap_2016$PASA==6]+ ParkCap_2016$CapWBNH[ParkCap_2016$PASA==6]
+
+durham_spaces$Visitors_Capacity[3] <- ParkCap_2025$CapHBO[ParkCap_2025$PASA==6]+ ParkCap_2025$CapHBSH[ParkCap_2025$PASA==6]+ ParkCap_2025$CapNHNW[ParkCap_2025$PASA==6]+ ParkCap_2025$CapWBNH[ParkCap_2025$PASA==6]
+
+durham_spaces$Visitors_Capacity[4] <- ParkCap_2045$CapHBO[ParkCap_2045$PASA==6]+ ParkCap_2045$CapHBSH[ParkCap_2045$PASA==6]+ ParkCap_2045$CapNHNW[ParkCap_2045$PASA==6]+ ParkCap_2045$CapWBNH[ParkCap_2045$PASA==6]
+
+durham_spaces$Visitors_Capacity[5]<- durham_spaces$Visitors[durham_spaces$Year==2018] * 6
+
+
+
 
 durham_spaces
 ```
@@ -173,15 +208,17 @@ library(DT)
 datatable(durham_spaces)
 ```
 
-Annual Growth rate of Durham Employment from 2045 to 2016: 
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results ='hide'}
+
+#Annual Growth rate of Durham Employment from 2045 to 2016: 
 durham_emp_growth<-log((SE_2045_sum$work[SE_2045_sum$PASA==6])/(SE_2016_sum$work[SE_2016_sum$PASA==6]))/(2045-2016)
 durham_emp_growth
 
 ```
-Annual Growth rate of Durham Visitor (Retail + Service) from 2045 to 2016:
 
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results ='hide'}
+#Annual Growth rate of Durham Visitor (Retail + Service) from 2045 to 2016:
 durham_visitor_growth<-log((SE_2045_sum$vistor[SE_2045_sum$PASA==6])/(SE_2016_sum$vistor[SE_2016_sum$PASA==6]))/(2045-2016)
 durham_visitor_growth
 ```
@@ -318,6 +355,44 @@ PK_WBNH$PASA[9] <- 9
 ```
 
 
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
+PK_HBW_45 <- tcadr::read_tcad("C:/Users/JacobFo/TRMv6.2/TRMv6.2 2045/Interim/PASAHBW_PK.BIN")
+PK_SHP_45 <- tcadr::read_tcad("C:/Users/JacobFo/TRMv6.2/TRMv6.2 2045/Interim/PASASHP_PK.BIN")
+PK_SCH_45 <- tcadr::read_tcad("C:/Users/JacobFo/TRMv6.2/TRMv6.2 2045/Interim/PASASCH_PK.BIN")
+PK_HBO_45 <- tcadr::read_tcad("C:/Users/JacobFo/TRMv6.2/TRMv6.2 2045/Interim/PASAOTH_PK.BIN")
+PK_NHNW_45 <- tcadr::read_tcad("C:/Users/JacobFo/TRMv6.2/TRMv6.2 2045/Interim/PASANHNW_PK.BIN")
+PK_WBNH_45 <- tcadr::read_tcad("C:/Users/JacobFo/TRMv6.2/TRMv6.2 2045/Interim/PASAWBNH_PK.BIN")
+
+for (i in 1:9)
+{
+  PK_HBW_45$PASA[i] <- i
+  PK_SHP_45$PASA[i] <- i
+  PK_SCH_45$PASA[i] <- i
+  PK_HBO_45$PASA[i] <- i
+  PK_NHNW_45$PASA[i] <- i
+  PK_WBNH_45$PASA[i] <- i
+}
+
+durham_attractions_45 <- data.frame(matrix(ncol =6, nrow = 1))
+x <- c("HBW", "HBShop", "HBO", "WBNH", "NHNW", "Total")
+colnames(durham_attractions_45) <- x
+
+durham_attractions_45$HBW<-sum(PK_HBW_45$A[PK_HBW_45$PASA==6])
+durham_attractions_45$HBShop<-sum(PK_SHP_45$A[PK_SHP_45$PASA==6])
+durham_attractions_45$HBO<-sum(PK_HBO_45$A[PK_HBO_45$PASA==6])
+durham_attractions_45$WBNH<-sum(PK_WBNH_45$A[PK_WBNH_45$PASA==6])
+durham_attractions_45$NHNW<-sum(PK_NHNW_45$A[PK_NHNW_45$PASA==6])
+durham_attractions_45$Total <- sum(durham_attractions_45$HBW + durham_attractions_45$HBShop + durham_attractions_45$HBO + durham_attractions_45$WBNH +
+                                     durham_attractions_45$WBNH + durham_attractions_45$NHNW)
+
+durham_attractions_45$Year <- 2045
+
+
+```
+
+
+
+
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
 durham_attractions <- data.frame(matrix(ncol =6, nrow = 1))
@@ -339,15 +414,20 @@ durham_attractions$Total<-durham_attractions$HBW+
   durham_attractions$HBO+
   durham_attractions$WBNH+
   durham_attractions$NHNW
+
+durham_attractions$Year <- 2016
   
 
 ```
 
-**Trips Attracted to Durham from TRMv6.2 2016 input. **
+**Trips Attracted to Durham in 2016 and 2045  **
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
-durham_attractions<- round(durham_attractions, digits=0)
-datatable(durham_attractions)
+
+durham_total_attractions <- rbind(durham_attractions, durham_attractions_45)
+durham_total_attractions<- round(durham_total_attractions, digits=0)
+
+datatable(durham_total_attractions)
 ```
 
 
@@ -448,7 +528,7 @@ datatable(final_capacity)
 
 
 
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
 library(tcadr)
 library(leaflet)
 library(xlsx)
