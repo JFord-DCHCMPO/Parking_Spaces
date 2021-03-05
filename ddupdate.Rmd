@@ -439,6 +439,7 @@ datatable(durham_spaces)
 **Final Parking Capacity by Trip Purpose, distributed using the trip attracted share**
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(DT)
 datatable(final_capacity)
 ```
 
@@ -447,6 +448,32 @@ datatable(final_capacity)
 
 
 
+```{r}
+library(tcadr)
+library(leaflet)
+library(xlsx)
+library(readxl)
+library(plotly)
+library(sf)
+library(dplyr)
+library(tidygeocoder)
+library(leaflet)
+library(rgdal)
+library(dplyr)
+library(rmarkdown)
+
+taz <- readOGR(dsn="C:/Users/JacobFo/TRMv6.2/2045 Updated ParkCap/Input/Master Geography", layer="TRMv6_TAZ") 
+
+
+taz_plot <- leaflet(taz) %>%
+  addTiles()%>%
+  addPolygons(data=taz)
+
+taz_plot
+
+
+                
+```
 
 
 
