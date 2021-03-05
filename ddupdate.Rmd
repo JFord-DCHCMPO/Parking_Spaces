@@ -134,6 +134,10 @@ parkingspaces <-read_excel("parkingspaces.xlsx")
 
 
 
+**Parking Spaces**
+
+
+
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 library(dplyr)
 durham_spaces <- parkingspaces %>%
@@ -151,7 +155,14 @@ durham_spaces[,-1] <- round(durham_spaces[,-1], digits=0)
 datatable(durham_spaces)
 ```
 
+**Parking Spaces -> Parking Capacity**
+
+
+
+
 Add the factoring of 1.4 for work spaces and 6 for visitors: 
+
+
 
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
@@ -234,14 +245,14 @@ durham_spaces <- add_row(durham_spaces, PASA= "Durham Forecasted", Year = 2020, 
 durham_spaces$Total[durham_spaces$Year==2020] <- durham_spaces$Work[durham_spaces$Year==2020] +durham_spaces$Visitors[durham_spaces$Year==2020]
 
 durham_spaces$Work_Capacity[durham_spaces$Year==2020]<- durham_spaces$Work[durham_spaces$Year==2020] * 1.4
-durham_spaces$Visitors_Capacity[durham_spaces$Year==2020]<- durham_spaces$Work[durham_spaces$Year==2020] * 6
+durham_spaces$Visitors_Capacity[durham_spaces$Year==2020]<- durham_spaces$Visitors[durham_spaces$Year==2020] * 6
 
 ##add 2030
 durham_spaces <- add_row(durham_spaces, PASA= "Durham Forecasted", Year = 2030, Work = 8000 +((8000/(2050-2018))*(2030-2018)) , Visitors = 2637 +((5274/(2050-2018))*(2030-2018)))
 
 durham_spaces$Total[durham_spaces$Year==2030] <- durham_spaces$Work[durham_spaces$Year==2030] +durham_spaces$Visitors[durham_spaces$Year==2030]
 durham_spaces$Work_Capacity[durham_spaces$Year==2030]<- durham_spaces$Work[durham_spaces$Year==2030] * 1.4
-durham_spaces$Visitors_Capacity[durham_spaces$Year==2030]<- durham_spaces$Work[durham_spaces$Year==2030] * 6
+durham_spaces$Visitors_Capacity[durham_spaces$Year==2030]<- durham_spaces$Visitors[durham_spaces$Year==2030] * 6
 
 
 
@@ -252,7 +263,7 @@ durham_spaces <- add_row(durham_spaces, PASA= "Durham Forecasted", Year = 2040, 
 
 durham_spaces$Total[durham_spaces$Year==2040] <- durham_spaces$Work[durham_spaces$Year==2040] +durham_spaces$Visitors[durham_spaces$Year==2040]
 durham_spaces$Work_Capacity[durham_spaces$Year==2040]<- durham_spaces$Work[durham_spaces$Year==2040] * 1.4
-durham_spaces$Visitors_Capacity[durham_spaces$Year==2040]<- durham_spaces$Work[durham_spaces$Year==2040] * 6
+durham_spaces$Visitors_Capacity[durham_spaces$Year==2040]<- durham_spaces$Visitors[durham_spaces$Year==2040] * 6
 
 
 ##add 2050
@@ -260,7 +271,7 @@ durham_spaces <- add_row(durham_spaces, PASA= "Durham Forecasted", Year = 2050, 
 
 durham_spaces$Total[durham_spaces$Year==2050] <- durham_spaces$Work[durham_spaces$Year==2050] +durham_spaces$Visitors[durham_spaces$Year==2050]
 durham_spaces$Work_Capacity[durham_spaces$Year==2050]<- durham_spaces$Work[durham_spaces$Year==2050] * 1.4
-durham_spaces$Visitors_Capacity[durham_spaces$Year==2050]<- durham_spaces$Work[durham_spaces$Year==2050] * 6
+durham_spaces$Visitors_Capacity[durham_spaces$Year==2050]<- durham_spaces$Visitors[durham_spaces$Year==2050] * 6
 
 ```   
 
@@ -519,13 +530,6 @@ final_capacity$Total_Cap <- final_capacity$HBW + final_capacity$HBO + final_capa
 datatable(durham_spaces)
 ```
 
-
-**Final Parking Capacity by Trip Purpose, distributed using the trip attracted share**
-
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
-library(DT)
-datatable(final_capacity)
-```
 
 
 
