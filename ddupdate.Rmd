@@ -229,35 +229,38 @@ Finally we provide the updated forecasted figures below. Compared to existing da
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
 ##add 2020
-durham_spaces <- add_row(durham_spaces, PASA= "Durham Forecasted", Year = 2020, Work = (durham_spaces$Work[durham_spaces$Year==2018]*(1+durham_emp_growth)^(2020-2018)), Visitors =(durham_spaces$Visitors[durham_spaces$Year==2018]*(1+durham_visitor_growth)^(2020-2018)))
+durham_spaces <- add_row(durham_spaces, PASA= "Durham Forecasted", Year = 2020, Work = 8000 +((8000/(2050-2018))*(2020-2018)) , Visitors = 2637 +((5274/(2050-2018))*(2020-2018)))
 
 durham_spaces$Total[durham_spaces$Year==2020] <- durham_spaces$Work[durham_spaces$Year==2020] +durham_spaces$Visitors[durham_spaces$Year==2020]
-##add capacity - keep ratio of 2018 space to ratio constant
-durham_spaces$Capacity[durham_spaces$Year==2020]<- (durham_spaces$Capacity[durham_spaces$Year==2018]/durham_spaces$Total[durham_spaces$Year==2018])*durham_spaces$Total[durham_spaces$Year==2020]
+
+durham_spaces$Work_Capacity[durham_spaces$Year==2020]<- durham_spaces$Work[durham_spaces$Year==2020] * 1.4
+durham_spaces$Visitors_Capacity[durham_spaces$Year==2020]<- durham_spaces$Work[durham_spaces$Year==2020] * 6
 
 ##add 2030
-durham_spaces <- add_row(durham_spaces, PASA= "Durham Forecasted", Year = 2030, Work = (durham_spaces$Work[durham_spaces$Year==2018]*(1+durham_emp_growth)^(2030-2018)), Visitors =(durham_spaces$Visitors[durham_spaces$Year==2018]*(1+durham_visitor_growth)^(2030-2018)))
+durham_spaces <- add_row(durham_spaces, PASA= "Durham Forecasted", Year = 2030, Work = 8000 +((8000/(2050-2018))*(2030-2018)) , Visitors = 2637 +((5274/(2050-2018))*(2030-2018)))
 
 durham_spaces$Total[durham_spaces$Year==2030] <- durham_spaces$Work[durham_spaces$Year==2030] +durham_spaces$Visitors[durham_spaces$Year==2030]
+durham_spaces$Work_Capacity[durham_spaces$Year==2030]<- durham_spaces$Work[durham_spaces$Year==2030] * 1.4
+durham_spaces$Visitors_Capacity[durham_spaces$Year==2030]<- durham_spaces$Work[durham_spaces$Year==2030] * 6
 
-##add capacity - keep ratio of 2018 space to ratio constant
-durham_spaces$Capacity[durham_spaces$Year==2030]<- (durham_spaces$Capacity[durham_spaces$Year==2018]/durham_spaces$Total[durham_spaces$Year==2018])*durham_spaces$Total[durham_spaces$Year==2030]
+
+
+
 
 ##add 2040
-durham_spaces <- add_row(durham_spaces, PASA= "Durham Forecasted", Year = 2040, Work = (durham_spaces$Work[durham_spaces$Year==2018]*(1+durham_emp_growth)^(2040-2018)), Visitors =(durham_spaces$Visitors[durham_spaces$Year==2018]*(1+durham_visitor_growth)^(2040-2018)))
+durham_spaces <- add_row(durham_spaces, PASA= "Durham Forecasted", Year = 2040, Work = 8000 +((8000/(2050-2018))*(2040-2018)) , Visitors = 2637 +((5274/(2050-2018))*(2040-2018)))
 
 durham_spaces$Total[durham_spaces$Year==2040] <- durham_spaces$Work[durham_spaces$Year==2040] +durham_spaces$Visitors[durham_spaces$Year==2040]
+durham_spaces$Work_Capacity[durham_spaces$Year==2040]<- durham_spaces$Work[durham_spaces$Year==2040] * 1.4
+durham_spaces$Visitors_Capacity[durham_spaces$Year==2040]<- durham_spaces$Work[durham_spaces$Year==2040] * 6
 
-##add capacity - keep ratio of 2018 space to ratio constant
-durham_spaces$Capacity[durham_spaces$Year==2040]<- (durham_spaces$Capacity[durham_spaces$Year==2018]/durham_spaces$Total[durham_spaces$Year==2018])*durham_spaces$Total[durham_spaces$Year==2040]
 
 ##add 2050
-durham_spaces <- add_row(durham_spaces, PASA= "Durham Forecasted", Year = 2050, Work = (durham_spaces$Work[durham_spaces$Year==2018]*(1+durham_emp_growth)^(2050-2018)), Visitors =(durham_spaces$Visitors[durham_spaces$Year==2018]*(1+durham_visitor_growth)^(2050-2018)))
+durham_spaces <- add_row(durham_spaces, PASA= "Durham Forecasted", Year = 2050, Work = 8000 +((8000/(2050-2018))*(2050-2018)) , Visitors = 2637 +((5274/(2050-2018))*(2050-2018)))
 
 durham_spaces$Total[durham_spaces$Year==2050] <- durham_spaces$Work[durham_spaces$Year==2050] +durham_spaces$Visitors[durham_spaces$Year==2050]
-
-##add capacity - keep ratio of 2018 space to ratio constant
-durham_spaces$Capacity[durham_spaces$Year==2050]<- (durham_spaces$Capacity[durham_spaces$Year==2018]/durham_spaces$Total[durham_spaces$Year==2018])*durham_spaces$Total[durham_spaces$Year==2050]
+durham_spaces$Work_Capacity[durham_spaces$Year==2050]<- durham_spaces$Work[durham_spaces$Year==2050] * 1.4
+durham_spaces$Visitors_Capacity[durham_spaces$Year==2050]<- durham_spaces$Work[durham_spaces$Year==2050] * 6
 
 ```   
 
@@ -269,6 +272,7 @@ durham_spaces$Capacity[durham_spaces$Year==2050]<- (durham_spaces$Capacity[durha
 
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
+durham_spaces$Capacity <- durham_spaces$Work_Capacity + durham_spaces$Visitors_Capacity
 durham_spaces$Capacity_Uses <- durham_spaces$Capacity/2
 durham_spaces[,-1] <- round(durham_spaces[,-1], digits=0)
 datatable(durham_spaces)
