@@ -1,15 +1,15 @@
 ---
 title: "Durham Update"
 author: "Jacob Ford DCHC MPO"
-date: "3/3/2021"
+date: "April 2021"
 output: html_document
 ---
 
 
-Using the [Downtown Durham Parking Study](https://www.parkdurham.org/DocumentCenter/View/119/Durham-Final-Report--Action-Plan-PDF "DDPS") 2018 total parking data and capacity was collected. Future projections are based off employment growth and the distribution from the Visitor category to trip purposes is based off peak trip attraction share, mirroring the previous methodology. 
+Using the [Downtown Durham Parking Study](https://www.parkdurham.org/DocumentCenter/View/119/Durham-Final-Report--Action-Plan-PDF "DDPS") 2018 total parking data and capacity was collected. Future projections are based off employment growth and the distribution from the Visitor category to trip purposes is based off peak trip attraction share, mirroring the previous methodology.   
 
 
-**Methodology**
+## Parking Spaces
 
 The Downtown Durham parking Study (DDPS) only looked at a portion of the Durham PASA area. 
 
@@ -17,10 +17,6 @@ The Downtown Durham parking Study (DDPS) only looked at a portion of the Durham 
 
 Total parking spaces from the DDPS equalled 10,637 after factoring out residential trips and only including those spots within the Durham PASA.  The table below shows the existing 2013, 2016, 2025 and 2045 parking space data for Durham's PASA, along with the updated 2018 data from the DDPS. The total 10,637 parking spaces were distributed to Work and Visitor categories by keeping the 2016 distribution between the two categories constant (62% work and 38% visitor), then calibrating to finally equal the final base year distribution of 8,000 worker spaces and 2,637 visitor spaces. 
 
-Capacity to worker space ratio = 1.4
-Capacity to visitor space ratio = 6.0
-
-Annual simplified growth factors for both work (total employment) and visitor (service + retail), future scenarios are projected. This scenario assumes double work parking spots by 2050 and triple visitor parking spaces by 2050. Scenarios are factored in 2020, 2030 and 2040 scenarios to the ultimate 2050 goal. 
 
 
 
@@ -134,11 +130,12 @@ parkingspaces <-read_excel("parkingspaces.xlsx")
 
 
 
-**Parking Spaces**
 
 
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
 library(dplyr)
 durham_spaces <- parkingspaces %>%
   filter(parkingspaces$PASA == '6 = Durham CBD*')
@@ -152,15 +149,22 @@ durham_spaces <- add_row(durham_spaces, PASA= "Durham Updated BY", Year = 2018, 
 
 library(DT)
 durham_spaces[,-1] <- round(durham_spaces[,-1], digits=0)
-datatable(durham_spaces)
+
+durham_spaces_2 <- durham_spaces %>%
+  filter(durham_spaces$Year==2016 | durham_spaces$Year==2018)
+
+datatable(durham_spaces_2)
 ```
 
-**Parking Spaces -> Parking Capacity**
+## Parking Spaces -> Parking Capacity 
 
 
+Capacity to worker space ratio = 1.4
+Capacity to visitor space ratio = 6.0
+
+Annual simplified growth factors for both work (total employment) and visitor (service + retail), future scenarios are projected. This scenario assumes double work parking spots by 2050 and triple visitor parking spaces by 2050. Scenarios are factored in 2020, 2030 and 2040 scenarios to the ultimate 2050 goal. 
 
 
-Add the factoring of 1.4 for work spaces and 6 for visitors: 
 
 
 
@@ -234,6 +238,7 @@ durham_visitor_growth<-log((SE_2045_sum$vistor[SE_2045_sum$PASA==6])/(SE_2016_su
 durham_visitor_growth
 ```
 
+## Forecast Parking Capacity  
 
 Finally we provide the updated forecasted figures below. Compared to existing data, Durham's capacity will decrease for all projected years. 
 
