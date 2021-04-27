@@ -159,8 +159,9 @@ datatable(durham_spaces_2)
 ## Parking Spaces -> Parking Capacity 
 
 
-Capacity to worker space ratio = 1.4
-Capacity to visitor space ratio = 6.0
+The impetus for this process was the existing 2016 and forecasted 2025-2035-2045 parking capacity for Durham CBD appeared very high, possibly falsely representing the number of trips the area can handle without adjusting parking costs. After the number of parking spots were updated for 2018, a new space to capacity ratio was developed after multiple iterations.   
+
+The final ratio was decided at 1.4 capacity to work space and 6.0 capacity to visitor space.   
 
 Annual simplified growth factors for both work (total employment) and visitor (service + retail), future scenarios are projected. This scenario assumes double work parking spots by 2050 and triple visitor parking spaces by 2050. Scenarios are factored in 2020, 2030 and 2040 scenarios to the ultimate 2050 goal. 
 
@@ -291,7 +292,9 @@ durham_spaces$Visitors_Capacity[durham_spaces$Year==2050]<- durham_spaces$Visito
 durham_spaces$Capacity <- durham_spaces$Work_Capacity + durham_spaces$Visitors_Capacity
 durham_spaces$Capacity_Uses <- durham_spaces$Capacity/2
 durham_spaces[,-1] <- round(durham_spaces[,-1], digits=0)
-datatable(durham_spaces)
+durham_spaces_3 <- durham_spaces %>%
+  filter(durham_spaces$PASA=="Durham Forecasted" | durham_spaces$PASA=="Durham Updated BY")
+datatable(durham_spaces_3)
 ```
 
 
