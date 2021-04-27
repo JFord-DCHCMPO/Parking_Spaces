@@ -6,16 +6,18 @@ output: html_document
 ---
 
 
-Using the [Downtown Durham Parking Study](https://www.parkdurham.org/DocumentCenter/View/119/Durham-Final-Report--Action-Plan-PDF "DDPS") 2018 total parking data and capacity was collected. Future projections are based off employment growth and the distribution from the Visitor category to trip purposes is based off peak trip attraction share, mirroring the previous methodology.   
+The impetus for this process was the existing 2016 and forecasted 2025-2035-2045 Durham parking capacity for Durham CBD appeared very high given the existing parking facilities for the base year. This may result in overestimating the number of trips the area can handle.  
+
+Using the [Downtown Durham Parking Study](https://www.parkdurham.org/DocumentCenter/View/119/Durham-Final-Report--Action-Plan-PDF "DDPS") 2018 total parking data and capacity was collected. This provides an opportunity to recalculate the base year parking spaces and distribute parking capacity on a more reasonable factor, while revisiting the growth assumptions used for future year scenarios. 
 
 
 ## Parking Spaces
 
-The Downtown Durham parking Study (DDPS) only looked at a portion of the Durham PASA area. 
+The Downtown Durham parking Study (DDPS) only looked at a portion of the Durham PASA area, as seen below: 
 
 ![DDPS Study Area, page 6](DDPS Study Area.PNG)
 
-Total parking spaces from the DDPS equalled 10,637 after factoring out residential trips and only including those spots within the Durham PASA.  The table below shows the existing 2013, 2016, 2025 and 2045 parking space data for Durham's PASA, along with the updated 2018 data from the DDPS. The total 10,637 parking spaces were distributed to Work and Visitor categories by keeping the 2016 distribution between the two categories constant (62% work and 38% visitor), then calibrating to finally equal the final base year distribution of 8,000 worker spaces and 2,637 visitor spaces. 
+Total parking spaces from the DDPS equaled **10,637** after factoring out residential trips and only including those spots within the Durham PASA.  The table below shows the existing 2013, 2016, 2025 and 2045 parking space data for Durham's PASA, along with the updated 2018 data from the DDPS. The total 10,637 parking spaces were distributed to Work and Visitor categories by keeping the 2016 distribution between the two categories constant (62% work and 38% visitor), then calibrating to finally equal the final base year distribution of 8,000 worker spaces and 2,637 visitor spaces. 
 
 
 
@@ -159,7 +161,7 @@ datatable(durham_spaces_2)
 ## Parking Spaces -> Parking Capacity 
 
 
-The impetus for this process was the existing 2016 and forecasted 2025-2035-2045 parking capacity for Durham CBD appeared very high, possibly falsely representing the number of trips the area can handle without adjusting parking costs. After the number of parking spots were updated for 2018, a new space to capacity ratio was developed after multiple iterations.   
+After the number of parking spots were updated for 2018, a new space to capacity ratio was developed after multiple iterations.   
 
 The final ratio was decided at 1.4 capacity to work space and 6.0 capacity to visitor space.   
 
