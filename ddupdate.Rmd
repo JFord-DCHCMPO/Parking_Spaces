@@ -241,12 +241,16 @@ durham_visitor_growth
 
 ## Forecast Parking Capacity  
 
-Finally we provide the updated forecasted figures below. Compared to existing data, Durham's capacity will decrease for all projected years. 
+Finally we provide the updated forecasted figures below. Compared to existing data, Durham's capacity will decrease for all projected years.  
+
+
+Key to this process is controlling future parking capacity growth relative to space available in Durham CBD. We now have an updated base year of 2018, with updated parking capacity. To forecast to 2020-2030-2040-2050, the team assumed that relative to 2018, the growth by 2050 for total parking capacity for work and visitor is 1.7x and 3x respective. Meaning, total work capacity is three times 2018 levels by 2050. 
+
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
 ##add 2020
-durham_spaces <- add_row(durham_spaces, PASA= "Durham Forecasted", Year = 2020, Work = 8000 +((8000/(2050-2018))*(2020-2018)) , Visitors = 2637 +((5274/(2050-2018))*(2020-2018)))
+durham_spaces <- add_row(durham_spaces, PASA= "Durham Forecasted", Year = 2020, Work = 8350 , Visitors = 2802)
 
 durham_spaces$Total[durham_spaces$Year==2020] <- durham_spaces$Work[durham_spaces$Year==2020] +durham_spaces$Visitors[durham_spaces$Year==2020]
 
@@ -254,7 +258,7 @@ durham_spaces$Work_Capacity[durham_spaces$Year==2020]<- durham_spaces$Work[durha
 durham_spaces$Visitors_Capacity[durham_spaces$Year==2020]<- durham_spaces$Visitors[durham_spaces$Year==2020] * 6
 
 ##add 2030
-durham_spaces <- add_row(durham_spaces, PASA= "Durham Forecasted", Year = 2030, Work = 8000 +((8000/(2050-2018))*(2030-2018)) , Visitors = 2637 +((5274/(2050-2018))*(2030-2018)))
+durham_spaces <- add_row(durham_spaces, PASA= "Durham Forecasted", Year = 2030, Work = 10100, Visitors = 4615)
 
 durham_spaces$Total[durham_spaces$Year==2030] <- durham_spaces$Work[durham_spaces$Year==2030] +durham_spaces$Visitors[durham_spaces$Year==2030]
 durham_spaces$Work_Capacity[durham_spaces$Year==2030]<- durham_spaces$Work[durham_spaces$Year==2030] * 1.4
@@ -265,7 +269,7 @@ durham_spaces$Visitors_Capacity[durham_spaces$Year==2030]<- durham_spaces$Visito
 
 
 ##add 2040
-durham_spaces <- add_row(durham_spaces, PASA= "Durham Forecasted", Year = 2040, Work = 8000 +((8000/(2050-2018))*(2040-2018)) , Visitors = 2637 +((5274/(2050-2018))*(2040-2018)))
+durham_spaces <- add_row(durham_spaces, PASA= "Durham Forecasted", Year = 2040, Work = 11850, Visitors = 6263)
 
 durham_spaces$Total[durham_spaces$Year==2040] <- durham_spaces$Work[durham_spaces$Year==2040] +durham_spaces$Visitors[durham_spaces$Year==2040]
 durham_spaces$Work_Capacity[durham_spaces$Year==2040]<- durham_spaces$Work[durham_spaces$Year==2040] * 1.4
@@ -273,11 +277,12 @@ durham_spaces$Visitors_Capacity[durham_spaces$Year==2040]<- durham_spaces$Visito
 
 
 ##add 2050
-durham_spaces <- add_row(durham_spaces, PASA= "Durham Forecasted", Year = 2050, Work = 8000 +((8000/(2050-2018))*(2050-2018)) , Visitors = 2637 +((5274/(2050-2018))*(2050-2018)))
+durham_spaces <- add_row(durham_spaces, PASA= "Durham Forecasted", Year = 2050, Work = 13600 , Visitors = 7911)
 
 durham_spaces$Total[durham_spaces$Year==2050] <- durham_spaces$Work[durham_spaces$Year==2050] +durham_spaces$Visitors[durham_spaces$Year==2050]
 durham_spaces$Work_Capacity[durham_spaces$Year==2050]<- durham_spaces$Work[durham_spaces$Year==2050] * 1.4
 durham_spaces$Visitors_Capacity[durham_spaces$Year==2050]<- durham_spaces$Visitors[durham_spaces$Year==2050] * 6
+durham_spaces
 
 ```   
 
@@ -450,16 +455,51 @@ durham_attractions$Year <- 2016
 durham_total_attractions <- rbind(durham_attractions, durham_attractions_45)
 durham_total_attractions<- round(durham_total_attractions, digits=0)
 
+#durham_total_attractions <-add_row(durham_total_attractions,HBW=18168, HBShop=12620, HBO=14266, WBNH=9130, NHNW=10050, Total=66510, Year=2050)
+
+
 datatable(durham_total_attractions)
 ```
 
 
-**Final Capacity Projections**
+Using the trip attraction ratios, and after multiple iterations, the final parking capacity table was developed below for Durham:
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
+final_table <- data.frame(matrix(ncol =7, nrow = 3))
+x <- c("Year", "HBW", "HBShop", "HBO", "WBNH", "NHNW", "Total")
 
-final_capacity <- tail(durham_spaces, n=5)
-datatable(final_capacity)
+colnames(final_table) <- x
+
+final_table$Year[1] <- 2016
+final_table$Year[2] <- 2045
+final_table$Year[3] <- 2050
+
+final_table$HBW[1] <- 13100
+final_table$HBW[2] <- 36980
+final_table$HBW[3] <- 19040
+
+final_table$HBShop[1] <- 2000
+final_table$HBShop[2] <- 28710
+final_table$HBShop[3] <- 11660
+
+final_table$HBO[1] <- 4300
+final_table$HBO[2] <- 30200
+final_table$HBO[3] <- 16630
+
+final_table$WBNH[1] <- 3600
+final_table$WBNH[2] <- 14400
+final_table$WBNH[3] <- 9130
+
+final_table$NHNW[1] <- 3400
+final_table$NHNW[2] <- 21280
+final_table$NHNW[3] <- 10050
+
+final_table$Total[1] <- 26400
+final_table$Total[2] <- 131570
+final_table$Total[3] <- 66510
+
+
+datatable(final_table)
 
 
 ```
@@ -524,52 +564,11 @@ final_capacity$NHNW <- round(final_capacity$NHNW, 0)
 
 final_capacity$Total_Cap <- final_capacity$HBW + final_capacity$HBO + final_capacity$HBShop + final_capacity$WBNH + final_capacity$NHNW
 
-
-
-```
-
-
-**Final Capacity Comparison**
-
-
-
-
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
-datatable(durham_spaces)
 ```
 
 
 
 
-
-
-
-```{r, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
-library(tcadr)
-library(leaflet)
-library(xlsx)
-library(readxl)
-library(plotly)
-library(sf)
-library(dplyr)
-library(tidygeocoder)
-library(leaflet)
-library(rgdal)
-library(dplyr)
-library(rmarkdown)
-
-taz <- readOGR(dsn="C:/Users/JacobFo/TRMv6.2/2045 Updated ParkCap/Input/Master Geography", layer="TRMv6_TAZ") 
-
-
-taz_plot <- leaflet(taz) %>%
-  addTiles()%>%
-  addPolygons(data=taz)
-
-taz_plot
-
-
-                
-```
 
 
 
