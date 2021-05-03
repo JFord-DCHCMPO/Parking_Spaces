@@ -31,6 +31,7 @@ library(plotly)
 library(sf)
 library(dplyr)
 library(tidygeocoder)
+library(DT)
 library(leaflet)
 library(rgdal)
 library(dplyr)
@@ -284,7 +285,7 @@ durham_spaces <- add_row(durham_spaces, PASA= "Durham Forecasted", Year = 2050, 
 durham_spaces$Total[durham_spaces$Year==2050] <- durham_spaces$Work[durham_spaces$Year==2050] +durham_spaces$Visitors[durham_spaces$Year==2050]
 durham_spaces$Work_Capacity[durham_spaces$Year==2050]<- durham_spaces$Work[durham_spaces$Year==2050] * 1.4
 durham_spaces$Visitors_Capacity[durham_spaces$Year==2050]<- durham_spaces$Visitors[durham_spaces$Year==2050] * 6
-durham_spaces
+
 
 ```   
 
@@ -464,7 +465,7 @@ datatable(durham_total_attractions)
 ```
 
 
-Using the trip attraction ratios, and after multiple iterations, the final parking capacity table was developed below for Durham:
+Using the trip attraction ratios, and after multiple iterations to adjust final distribution, the final parking capacity table was developed below for Durham:
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 final_table <- data.frame(matrix(ncol =7, nrow = 3))
@@ -570,7 +571,48 @@ final_capacity$Total_Cap <- final_capacity$HBW + final_capacity$HBO + final_capa
 
 
 
+```{r}
+create_dt <- function(x){
+  DT::datatable(x,
+                extensions = 'Buttons',
+                options = list(dom = 'Blfrtip',
+                               buttons = c('copy', 'csv', 'excel', 'pdf', 'print'),
+                               lengthMenu = list(c(10,25,50,-1),
+                                                 c(10,25,50,"All"))))
+}
+```
 
+
+
+The final 2050 capacity table can be downloaded here: 
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+
+final_2050cap <- tcadr::read_tcad("C:/Users/JacobFo/OneDrive - City of Durham/TRM G2/Parking Capacity/2050 Parkcap.bin")
+
+labels = c("1 = UNC Campus",
+"2 = Duke Campus",
+"3 = NCSU Campus",
+"4 = NCCU Campus",
+"5 = Chapel Hill CBD",
+"6 = Durham CBD",
+"7 = Raleigh CBD",
+"8 = Carrboro CBD",
+"9 = Hillsborough CBD",
+"10=RDU"
+
+
+)
+
+levels = c(1,2,3,4,5,6,7,8,9,10)
+
+final_2050cap$PASA <- ordered(final_2050cap$PASA,
+                         levels=levels,
+                         labels=labels)
+
+create_dt(final_2050cap)
+```
 
 
 
