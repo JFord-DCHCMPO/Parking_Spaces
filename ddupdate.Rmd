@@ -571,12 +571,12 @@ final_capacity$Total_Cap <- final_capacity$HBW + final_capacity$HBO + final_capa
 
 
 
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
 create_dt <- function(x){
   DT::datatable(x,
                 extensions = 'Buttons',
                 options = list(dom = 'Blfrtip',
-                               buttons = c('copy', 'csv', 'excel', 'pdf', 'print'),
+                               buttons = c('copy', 'csv', 'excel', 'print'),
                                lengthMenu = list(c(10,25,50,-1),
                                                  c(10,25,50,"All"))))
 }
