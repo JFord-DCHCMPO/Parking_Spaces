@@ -5,7 +5,70 @@ date: "3/3/2021"
 output: html_document
 ---
 
+An updated 2020 geodatabase of Duke's facilities was used to update the base year parking spaace supply. 
 
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+library(dplyr)
+library(ggplot2)
+library(leaflet)
+library(tcadr)
+library(sf)
+library(xlsx)
+library(readxl)
+library(plotly)
+library(sf)
+library(dplyr)
+library(tidygeocoder)
+library(leaflet)
+library(rgdal)
+library(dplyr)
+library(rmarkdown)
+library(crosstalk)
+library(lubridate)
+library(htmltools)
+library(RColorBrewer)
+
+duke_gis <- st_read("C:/Users/JacobFo/OneDrive - City of Durham/TRM G2/Parking Capacity/Duke Update/Duke Update/Duke Parking.shp")
+
+
+
+duke_map <-leaflet()%>%
+  setView(-78.94, 36.00, zoom=14) %>%
+  addProviderTiles(providers$CartoDB.Positron)%>%
+   addPolygons(data = duke_gis %>% slice(1:nrow(duke_gis)), 
+     fillColor = "lightgrey",
+              weight=2,
+             fill=TRUE)
+             # fill=NA,
+
+
+duke_map
+
+
+```
+
+
+
+
+
+```{r}
+x <- duke_gis
+
+leaflet() %>% addPolygons(data = x %>% slice(1:nrow(x))) %>% addProviderTiles("CartoDB.Positron")
+```
+
+
+
+
+
+
+
+
+
+
+
+############ Old Section
 
 For Duke University, a 2015 inventory of parking spaces was used to update the base year. Besides the base year data changing the methods are the same as completed in the Durham update. Future projections are based off employment growth and the distribution from the Work, Visitor and University categories to trip purposes is based off peak trip attraction share.
 
