@@ -5,7 +5,7 @@ date: "3/3/2021"
 output: html_document
 ---
 
-An updated 2020 geodatabase of Duke's facilities was used to update the base year parking spaace supply. 
+An updated 2020 geodatabase of Duke's facilities was used to update the base year parking space supply. The shapefile is shown below,  
 
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
@@ -39,8 +39,11 @@ duke_map <-leaflet()%>%
    addPolygons(data = duke_gis %>% slice(1:nrow(duke_gis)), 
      fillColor = "lightgrey",
               weight=2,
-             fill=TRUE)
-             # fill=NA,
+             fill=TRUE,
+            popup=paste("Parking Lot Name: ", duke_gis$NAME, "<br>",
+                        "Number of spaces: ", duke_gis$TOTAL_SPC ,"<br>", 
+                        "Zone: ", duke_gis$ZONE))
+             
 
 
 duke_map
@@ -48,15 +51,25 @@ duke_map
 
 ```
 
+From the building inventory, the total number of parking spaces for 2020 is 23,586. Using the zone classification and [Duke's parking descriptions](https://parking.duke.edu/parking/garages-lots-fees), the split for work/visitor/university was determined as below:
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+second <- c( 17504, 4577, 1505, 23586)
+first <- c("Work", "Visitor", "University", "Total")
+
+duke_spaces <- data.frame(first, second)
+
+duke_spaces
+```
 
 
 
 
 ```{r}
-x <- duke_gis
-
-leaflet() %>% addPolygons(data = x %>% slice(1:nrow(x))) %>% addProviderTiles("CartoDB.Positron")
+sum(duke_gis$TOTAL_SPC)
 ```
+
 
 
 
